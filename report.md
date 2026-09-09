@@ -311,66 +311,77 @@ experiences excessive elastic deformation.
 
 ## 5. Problem Classification
 
-The quadcopter arm design problem is formulated as a **constrained
+The quadcopter arm design problem is classified as a **constrained
 continuous nonlinear optimization problem (NLP)**.
 
-All four decision variables, $\mathbf{x}=[L,b,h,t]^T$, are continuous
-geometric quantities. The formulation does not contain integer or binary
-decision variables, so it is not a mixed-integer optimization problem.
+### Continuous Decision Variables
 
-The problem is nonlinear because the objective function contains products
-of the decision variables. The arm-mass objective is
+The design vector is
 
-```math
-m_{\mathrm{arms}}(L,b,h,t)
-=
-4\rho L\left[bh-(b-2t)(h-2t)\right].
-```
+$\mathbf{x}=[L,b,h,t]^T$.
 
-For example, terms involving products of $L$, $b$, $h$, and $t$ prevent
-the objective from being a linear function of the decision variables.
+All four decision variables represent geometric dimensions and are modeled
+as continuous quantities. The formulation does not contain integer or
+binary decision variables and is therefore not an integer or mixed-integer
+optimization problem.
 
-The structural constraints also introduce nonlinearity. The second moment
-of area of the hollow rectangular cross-section is
+### Constrained Formulation
 
-```math
-I(b,h,t)
-=
-\frac{bh^3-(b-2t)(h-2t)^3}{12}.
-```
+The design must satisfy multiple geometric and structural requirements,
+including variable bounds, hollow cross-section validity, propeller
+clearance, maximum bending stress, and maximum tip deflection.
 
-This expression contains powers and products of the geometric decision
-variables. Consequently, the bending-stress constraint contains the
-nonlinear expression
+All constraints in the current formulation are **inequality constraints**.
+No equality constraints are imposed.
 
-```math
-\sigma_{\max}(L,b,h,t)
-=
-\frac{F_dL(h/2)}{I(b,h,t)},
-```
+### Nonlinearity
 
-and the deflection constraint contains
+The optimization problem is nonlinear because the objective function and
+several constraints contain nonlinear combinations of the decision
+variables.
 
-```math
-\delta_{\max}(L,b,h,t)
-=
-\frac{F_dL^3}{3E I(b,h,t)}.
-```
+The arm-mass objective is
 
-The formulation is constrained because feasible designs must satisfy
-variable bounds, hollow-section geometric requirements, propeller
-clearance, maximum bending stress, and maximum tip deflection. These are
-inequality constraints; the current formulation does not contain any
-equality constraints.
+$m_{\mathrm{arms}}(L,b,h,t)
+=4\rho L[bh-(b-2t)(h-2t)]$.
 
-Therefore, the overall problem is classified as a **constrained continuous
-nonlinear program (NLP)**.
+This expression contains products between decision variables, including
+terms involving $L$, $b$, $h$, and $t$, and is therefore not a linear
+function of the design vector.
+
+The second moment of area is
+
+$I(b,h,t)
+=[bh^3-(b-2t)(h-2t)^3]/12$.
+
+This expression contains products and powers of the geometric decision
+variables. As a result, both the stress and deflection constraints are
+also nonlinear:
+
+$\sigma_{\max}(L,b,h,t)
+=\frac{F_dL(h/2)}{I(b,h,t)}$
+
+and
+
+$\delta_{\max}(L,b,h,t)
+=\frac{F_dL^3}{3E I(b,h,t)}$.
+
+These expressions contain powers, products, and ratios involving the
+decision variables. Therefore, the formulation cannot be represented as
+a linear program.
+
+### Convexity
 
 Although the formulation contains nonlinear expressions, nonlinearity
-alone does not prove that an optimization problem is nonconvex. Convexity
-has not been established for the current formulation over the selected
-design domain, so the problem is not assumed to be convex without further
-analysis.
+alone does not imply that an optimization problem is nonconvex. Convexity
+of the objective function and feasible region has not been established
+over the selected design domain. Therefore, the current formulation is
+classified as a nonlinear program without making an unsupported assumption
+about convexity.
+
+Overall, the quadcopter arm design problem is classified as a
+**constrained continuous nonlinear program (NLP)**.
+
 ## 6. Assumptions and Simplifications
 
 The optimization model uses several assumptions to keep the formulation
