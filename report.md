@@ -27,6 +27,20 @@ clearance, and geometric constraints?
 
 ## 2. Decision Variables
 
+### Quadcopter Geometry
+
+The quadcopter is modeled using a fixed square central body with four
+identical arms arranged in an X-configuration. The primary geometric
+quantities used throughout the optimization formulation are illustrated
+below.
+
+![Quadcopter frame geometry and design variables](figures/quadcopter_geometry.png)
+
+*Figure 1. Simplified quadcopter geometry and hollow rectangular arm
+cross-section. The optimization variables are arm length $L$, outer width
+$b$, outer height $h$, and wall thickness $t$. The central body width $B$
+and propeller diameter $D_p$ are fixed parameters.*
+
 The quadcopter frame is modeled using four identical hollow rectangular
 arms. Four continuous decision variables are used to define the geometry
 of each arm.
