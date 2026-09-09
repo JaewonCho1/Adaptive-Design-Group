@@ -467,6 +467,46 @@ and propeller clearance while keeping the formulation manageable. A
 higher-fidelity design study could relax these assumptions by including
 dynamic loading, detailed composite-material behavior, additional failure
 modes, and optimization of other quadcopter components.
+
+## 7. Computational Solution (Bonus)
+
+### Solution Methodology
+
+The optimization problem was solved computationally using the Sequential Least Squares Programming (SLSQP) algorithm available in the Python SciPy optimization library through VS Code. SLSQP was selected because it efficiently handles nonlinear objective functions together with nonlinear inequality constraints and variable bounds. The optimization variables consisted of the arm length \(L\), outer width \(b\), outer height \(h\), and wall thickness \(t\). The objective was to minimize the total mass of the four quadcopter arms while satisfying the geometric, propeller-clearance, stress, and deflection constraints developed in the mathematical formulation.
+
+The optimization was initialized with a feasible design and terminated when the objective function converged to a constrained minimum.
+
+### Optimal Design
+
+The optimization produced the following optimal geometry:
+
+| Variable              | Optimal Value |
+| --------------------- | ------------: |
+| Arm length, \(L\)     |    106.985 mm |
+| Arm width, \(b\)      |     10.000 mm |
+| Arm height, \(h\)     |     10.000 mm |
+| Wall thickness, \(t\) |      0.500 mm |
+
+The corresponding structural performance was
+
+| Quantity               |     Value |
+| ---------------------- | --------: |
+| Total arm mass         |  12.359 g |
+| Maximum bending stress | 25.20 MPa |
+| Maximum tip deflection | 0.1538 mm |
+
+### Discussion
+
+The optimizer selected the smallest allowable values for all four design variables. The optimal arm length is approximately 107 mm, which corresponds almost exactly to the minimum length required to satisfy the propeller-clearance constraint. Likewise, the optimizer selected the minimum permitted cross-sectional dimensions and wall thickness because reducing these variables decreases the structural mass.
+
+Although the dimensions were minimized, the resulting design remained well within the allowable structural limits. The maximum bending stress of 25.20 MPa is substantially lower than the allowable stress of 905 MPa, indicating that the stress constraint is inactive at the optimum. Similarly, the maximum tip deflection of 0.1538 mm is significantly smaller than the allowable deflection of approximately 1.07 mm (1% of the arm length), demonstrating that the stiffness requirement is also inactive.
+
+These results indicate that the governing design constraint is the propeller-clearance requirement rather than the structural constraints. Because the selected material possesses high stiffness and strength relative to the applied motor load, the minimum feasible geometry already provides adequate structural performance. Under the assumptions adopted in this model, further reductions in structural mass would require relaxing the geometric lower bounds or reducing the required propeller spacing rather than modifying the structural constraints.
+
+### Reproducibility
+
+The optimization was implemented in Python using NumPy and SciPy. The source code is included in the project repository as `solve.py`. Running the script reproduces the optimization, verifies all constraints, and generates the optimization results and convergence plot.
+
    
 ## References
 
