@@ -100,6 +100,191 @@ performance.
 
 ## 4. Constraints
 
+### 4.1 Geometric Validity
+
+Each arm is modeled as a hollow rectangular tube. The dimensions of the
+hollow interior are
+
+$$
+b_i=b-2t
+$$
+
+and
+
+$$
+h_i=h-2t.
+$$
+
+For the hollow cross-section to remain physically valid, both internal
+dimensions must remain positive. Therefore,
+
+$$
+2t<b
+$$
+
+and
+
+$$
+2t<h.
+$$
+
+These constraints prevent the optimizer from selecting a wall thickness
+that is incompatible with the selected outer width or height.
+
+### 4.2 Propeller Clearance
+
+Adjacent propellers must have sufficient separation to prevent their swept
+disks from overlapping. The central body is modeled as a square with fixed
+width $B$, and each arm extends diagonally outward from a corner of the body.
+
+The distance from the center of the vehicle to a body corner is
+
+$$
+r_b=\frac{B}{\sqrt{2}}.
+$$
+
+Because the structural arm has length $L$, the center-to-motor distance is
+
+$$
+r=L+\frac{B}{\sqrt{2}}.
+$$
+
+Adjacent motors are separated by an angle of $90^\circ$, giving an
+adjacent motor spacing of
+
+$$
+d_{\mathrm{motor}}=\sqrt{2}r
+=B+\sqrt{2}L.
+$$
+
+To prevent adjacent propeller disks from overlapping, the motor spacing
+must be at least the propeller diameter $D_p$ plus a specified minimum
+clearance $C_{\min}$. Therefore, the propeller-clearance constraint is
+
+$$
+B+\sqrt{2}L \geq D_p+C_{\min}.
+$$
+
+Equivalently, the minimum arm length required by propeller clearance is
+
+$$
+L \geq
+\frac{D_p+C_{\min}-B}{\sqrt{2}}.
+$$
+
+For the reference configuration, a $100$ mm square central body and a
+$241.3$ mm (9.5 in) propeller diameter are assumed. A minimum propeller
+tip clearance will be specified as a fixed design parameter.
+
+### 4.3 Structural Stress
+
+Each quadcopter arm is approximated as a cantilever beam fixed at the
+central body and subjected to a vertical design load $F_d$ at its free
+end. The design load is defined as
+
+$$
+F_d=nF_{\mathrm{motor}},
+$$
+
+where $F_{\mathrm{motor}}$ is the reference maximum motor thrust and $n$
+is a design load factor used to provide margin for loading not represented
+by the simplified static beam model.
+
+Under this loading condition, the maximum bending moment occurs at the
+root of the arm and is
+
+$$
+M_{\max}=F_dL.
+$$
+
+The maximum bending stress is calculated using the beam-bending relation
+
+$$
+\sigma_{\max}=\frac{M_{\max}c}{I},
+$$
+
+where $c=h/2$ is the distance from the neutral axis to the outer surface
+of the arm and $I$ is the second moment of area of the cross-section.
+
+For the hollow rectangular cross-section,
+
+$$
+I(b,h,t)
+=
+\frac{
+bh^3-(b-2t)(h-2t)^3
+}{12}.
+$$
+
+Therefore, the maximum bending stress can be expressed directly in terms
+of the design variables as
+
+$$
+\sigma_{\max}(L,b,h,t)
+=
+\frac{
+FL(h/2)
+}{
+I(b,h,t)
+}.
+$$
+
+The structural strength constraint is
+
+$$
+\sigma_{\max}(L,b,h,t)
+\leq
+\sigma_{\mathrm{allow}},
+$$
+
+where $\sigma_{\mathrm{allow}}$ is the allowable bending stress of the
+selected arm material. This constraint prevents the optimizer from
+reducing the arm dimensions to values that would produce unacceptable
+bending stress under the specified motor loading.
+
+### 4.4 Structural Deflection
+
+Satisfying the stress constraint does not necessarily guarantee that an
+arm is sufficiently stiff. Excessive deformation could alter the position
+and orientation of the motor even if the material remains below its
+allowable stress. Therefore, a separate deflection constraint is imposed.
+
+Using the same cantilever-beam approximation and design load $F_d$ defined
+for the stress constraint, the maximum vertical deflection occurs at the
+motor end of the arm and is
+
+$$
+\delta_{\max}
+=
+\frac{F_dL^3}{3EI},
+$$
+
+where $E$ is the Young's modulus of the selected arm material and $I$ is
+the second moment of area of the hollow rectangular cross-section.
+
+Using the previously defined expression $I(b,h,t)$, the tip deflection can
+be written directly in terms of the design variables as
+
+$$
+\delta_{\max}(L,b,h,t)
+=
+\frac{F_dL^3}
+{3E I(b,h,t)}.
+$$
+
+The stiffness constraint is therefore
+
+$$
+\delta_{\max}(L,b,h,t)
+\leq
+\delta_{\mathrm{allow}},
+$$
+
+where $\delta_{\mathrm{allow}}$ is the maximum allowable motor-end
+deflection. This constraint prevents the optimizer from selecting a
+minimum-mass arm geometry that satisfies the strength requirement but is
+too flexible for the intended structural application.
+
 ## 5. Problem Classification
 
 ## 6. Assumptions and Simplifications
