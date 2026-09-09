@@ -57,6 +57,47 @@ clearance is maintained.
 
 ## 3. Objective Function
 
+The objective of this optimization problem is to minimize the structural
+mass of the four quadcopter arms. Because all four arms are assumed to
+have identical geometry and material, the total structural arm mass can
+be calculated from the mass of a single arm.
+
+For a hollow rectangular arm, the cross-sectional material area is
+
+$$
+A(b,h,t)=bh-(b-2t)(h-2t),
+$$
+
+where $bh$ represents the area of the outer rectangle and
+$(b-2t)(h-2t)$ represents the hollow interior.
+
+The volume of one arm is $AL$, and its mass is $\rho AL$, where $\rho$
+is the material density. Therefore, the total mass of the four arms is
+
+$$
+m_{\text{frame}}(L,b,h,t)
+=
+4\rho L
+\left[
+bh-(b-2t)(h-2t)
+\right].
+$$
+
+The optimization objective is therefore
+
+$$
+\boxed{
+\min_{L,b,h,t}
+\quad
+m_{\text{frame}}(L,b,h,t)
+}
+$$
+
+Minimizing this objective reduces the structural mass of the quadcopter
+frame while the constraints defined in the following section ensure that
+the resulting design maintains the required structural and geometric
+performance.
+
 ## 4. Constraints
 
 ## 5. Problem Classification
