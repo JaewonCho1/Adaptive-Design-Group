@@ -74,24 +74,17 @@ $(b-2t)(h-2t)$ represents the hollow interior.
 The volume of one arm is $AL$, and its mass is $\rho AL$, where $\rho$
 is the material density. Therefore, the total mass of the four arms is
 
-$$
-m_{\text{frame}}(L,b,h,t)
+```math
+m_{\mathrm{arms}}(L,b,h,t)
 =
-4\rho L
-\left[
-bh-(b-2t)(h-2t)
-\right].
-$$
+4\rho L\left[bh-(b-2t)(h-2t)\right]
+```
 
 The optimization objective is therefore
 
-$$
-\boxed{
-\min_{L,b,h,t}
-\quad
-m_{\text{frame}}(L,b,h,t)
-}
-$$
+```math
+\min_{L,b,h,t} \quad m_{\mathrm{arms}}(L,b,h,t)
+```
 
 Minimizing this objective reduces the structural mass of the quadcopter
 frame while the constraints defined in the following section ensure that
@@ -183,7 +176,7 @@ central body and subjected to a vertical design load $F_d$ at its free
 end. The design load is defined as
 
 $$
-F_d=nF_{\mathrm{motor}},
+F_d=nF_{\mathrm{motor}}
 $$
 
 where $F_{\mathrm{motor}}$ is the reference maximum motor thrust and $n$
@@ -194,13 +187,13 @@ Under this loading condition, the maximum bending moment occurs at the
 root of the arm and is
 
 $$
-M_{\max}=F_dL.
+M_{\max}=F_dL
 $$
 
 The maximum bending stress is calculated using the beam-bending relation
 
 $$
-\sigma_{\max}=\frac{M_{\max}c}{I},
+\sigma_{\max}=\frac{M_{\max}c}{I}
 $$
 
 where $c=h/2$ is the distance from the neutral axis to the outer surface
@@ -208,34 +201,28 @@ of the arm and $I$ is the second moment of area of the cross-section.
 
 For the hollow rectangular cross-section,
 
-$$
+```math
 I(b,h,t)
 =
-\frac{
-bh^3-(b-2t)(h-2t)^3
-}{12}.
-$$
+\frac{bh^3-(b-2t)(h-2t)^3}{12}
+```
 
 Therefore, the maximum bending stress can be expressed directly in terms
 of the design variables as
 
-$$
+```math
 \sigma_{\max}(L,b,h,t)
 =
-\frac{
-FL(h/2)
-}{
-I(b,h,t)
-}.
-$$
+\frac{F_dL(h/2)}{I(b,h,t)}
+```
 
 The structural strength constraint is
 
-$$
+```math
 \sigma_{\max}(L,b,h,t)
 \leq
-\sigma_{\mathrm{allow}},
-$$
+\sigma_{\mathrm{allow}}
+```
 
 where $\sigma_{\mathrm{allow}}$ is the allowable bending stress of the
 selected arm material. This constraint prevents the optimizer from
@@ -253,11 +240,11 @@ Using the same cantilever-beam approximation and design load $F_d$ defined
 for the stress constraint, the maximum vertical deflection occurs at the
 motor end of the arm and is
 
-$$
+```math
 \delta_{\max}
 =
-\frac{F_dL^3}{3EI},
-$$
+\frac{F_dL^3}{3EI}
+```
 
 where $E$ is the Young's modulus of the selected arm material and $I$ is
 the second moment of area of the hollow rectangular cross-section.
@@ -265,20 +252,24 @@ the second moment of area of the hollow rectangular cross-section.
 Using the previously defined expression $I(b,h,t)$, the tip deflection can
 be written directly in terms of the design variables as
 
-$$
+```math
 \delta_{\max}(L,b,h,t)
 =
-\frac{F_dL^3}
-{3E I(b,h,t)}.
-$$
+\frac{F_dL^3}{3E I(b,h,t)}
+```
 
 The stiffness constraint is therefore
 
-$$
+```math
 \delta_{\max}(L,b,h,t)
 \leq
-\delta_{\mathrm{allow}},
-$$
+\delta_{\mathrm{allow}}
+```
+
+where $\delta_{\mathrm{allow}}$ is the maximum allowable motor-end
+deflection. This constraint prevents the optimizer from selecting a
+minimum-mass arm geometry that satisfies the strength requirement but is
+too flexible for the intended structural application.
 
 where $\delta_{\mathrm{allow}}$ is the maximum allowable motor-end
 deflection. This constraint prevents the optimizer from selecting a
