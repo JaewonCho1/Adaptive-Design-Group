@@ -278,19 +278,66 @@ too flexible for the intended structural application.
 
 ## 5. Problem Classification
 
-The quadcopter frame design problem is formulated as a **constrained
+The quadcopter arm design problem is formulated as a **constrained
 continuous nonlinear optimization problem (NLP)**.
 
-All four decision variables,
+All four decision variables, $\mathbf{x}=[L,b,h,t]^T$, are continuous
+geometric quantities. The formulation does not contain integer or binary
+decision variables, so it is not a mixed-integer optimization problem.
+
+The problem is nonlinear because the objective function contains products
+of the decision variables. The arm-mass objective is
 
 ```math
-\mathbf{x}=[L,\ b,\ h,\ t]^T
+m_{\mathrm{arms}}(L,b,h,t)
+=
+4\rho L\left[bh-(b-2t)(h-2t)\right].
 ```
 
-are continuous geometric quantities. The formulation does not currently
-contain integer or binary decision variables, so it is not a mixed-integer
-optimization problem.
+For example, terms involving products of $L$, $b$, $h$, and $t$ prevent
+the objective from being a linear function of the decision variables.
 
+The structural constraints also introduce nonlinearity. The second moment
+of area of the hollow rectangular cross-section is
+
+```math
+I(b,h,t)
+=
+\frac{bh^3-(b-2t)(h-2t)^3}{12}.
+```
+
+This expression contains powers and products of the geometric decision
+variables. Consequently, the bending-stress constraint contains the
+nonlinear expression
+
+```math
+\sigma_{\max}(L,b,h,t)
+=
+\frac{F_dL(h/2)}{I(b,h,t)},
+```
+
+and the deflection constraint contains
+
+```math
+\delta_{\max}(L,b,h,t)
+=
+\frac{F_dL^3}{3E I(b,h,t)}.
+```
+
+The formulation is constrained because feasible designs must satisfy
+variable bounds, hollow-section geometric requirements, propeller
+clearance, maximum bending stress, and maximum tip deflection. These are
+inequality constraints; the current formulation does not contain any
+equality constraints.
+
+Therefore, the overall problem is classified as a **constrained continuous
+nonlinear program (NLP)**.
+
+Although the formulation contains nonlinear expressions, nonlinearity
+alone does not prove that an optimization problem is nonconvex. Convexity
+has not been established for the current formulation over the selected
+design domain, so the problem is not assumed to be convex without further
+analysis.
 ## 6. Assumptions and Simplifications
 
 The optimization model uses several assumptions to keep the formulation
