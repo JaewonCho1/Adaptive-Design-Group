@@ -293,4 +293,64 @@ optimization problem.
 
 ## 6. Assumptions and Simplifications
 
+The optimization model uses several assumptions to keep the formulation
+tractable while retaining the primary structural tradeoffs relevant to the
+quadcopter arm design.
+
+1. **Symmetric frame:** The quadcopter is assumed to have four identical
+   arms. All four arms therefore share the same values of $L$, $b$, $h$,
+   and $t$. This reduces the number of independent geometric variables and
+   is consistent with the symmetric X-configuration considered in this
+   project.
+
+2. **Cantilever-beam model:** Each arm is modeled as a cantilever beam with
+   a fixed connection at the central body and a load applied at the motor
+   end. The central body is assumed to be sufficiently rigid for this
+   approximation. This allows standard beam-bending equations to be used
+   for estimating stress and deflection.
+
+3. **Equivalent static loading:** Motor loading is represented using the
+   design load $F_d=nF_{\mathrm{motor}}$, where $F_{\mathrm{motor}}$ is the
+   reference maximum motor thrust and $n$ is a design load factor. This
+   provides a simplified margin for loading effects that are not explicitly
+   represented by the static beam model.
+
+4. **Effective material properties:** The arm material is modeled using a
+   fixed Young's modulus $E$, density $\rho$, and allowable stress
+   $\sigma_{\mathrm{allow}}$. Carbon-fiber composites are anisotropic in
+   reality, so these values represent effective properties for the primary
+   structural loading direction rather than a complete composite-material
+   model.
+
+5. **Constant cross-section:** Each arm is assumed to have a uniform hollow
+   rectangular cross-section along its entire length. Therefore, the
+   dimensions $b$, $h$, and $t$ do not vary along the arm. Tapered or
+   spatially varying arm geometries are not considered.
+
+6. **Fixed central body:** The central body is modeled as a square with a
+   fixed width of $B=100$ mm. The dimensions and mass of the central body
+   are not design variables and are not included in the arm-mass objective.
+   The body geometry is used when determining motor spacing and propeller
+   clearance.
+
+7. **Fixed propulsion configuration:** The motor and propeller system is
+   assumed to be predetermined. Motor thrust $F_{\mathrm{motor}}$ and
+   propeller diameter $D_p$ are therefore treated as fixed parameters
+   rather than decision variables. The optimization focuses only on the
+   structural geometry of the quadcopter arms.
+
+8. **Limited structural failure modes:** The structural model considers
+   bending stress and vertical tip deflection. Other effects such as
+   torsion, local buckling, fatigue, vibration, resonance, connection
+   failure, composite delamination, and impact loading are not explicitly
+   modeled. These effects could be considered in a higher-fidelity
+   structural analysis.
+
+These assumptions allow the optimization problem to focus on the
+relationship between arm geometry, structural mass, strength, stiffness,
+and propeller clearance while keeping the formulation manageable. A
+higher-fidelity design study could relax these assumptions by including
+dynamic loading, detailed composite-material behavior, additional failure
+modes, and optimization of other quadcopter components.
+   
 ## References
