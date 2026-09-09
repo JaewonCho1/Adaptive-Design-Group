@@ -278,6 +278,19 @@ too flexible for the intended structural application.
 
 ## 5. Problem Classification
 
+The quadcopter frame design problem is formulated as a **constrained
+continuous nonlinear optimization problem (NLP)**.
+
+All four decision variables,
+
+```math
+\mathbf{x}=[L,\ b,\ h,\ t]^T
+```
+
+are continuous geometric quantities. The formulation does not currently
+contain integer or binary decision variables, so it is not a mixed-integer
+optimization problem.
+
 ## 6. Assumptions and Simplifications
 
 ## References
