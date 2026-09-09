@@ -76,7 +76,6 @@ these quantities are not selected by the optimizer.
 | $\sigma_{\mathrm{allow}}$ | Allowable bending stress | 905 | MPa | Calculated from T300/epoxy flexural strength using $FS=2.0$ [3] |
 | $C_{\min}$ | Minimum propeller tip clearance | 10 | mm | Design requirement |
 | $k_\delta$ | Maximum tip-deflection ratio | 0.01 | -- | Design requirement |
-| $\sigma_{\mathrm{allow}}$ | Allowable bending stress | 905 | MPa | Calculated as $\sigma_{\mathrm{strength}}/FS$ using T300/epoxy flexural strength [3] |
 
 ## 3. Objective Function
 
