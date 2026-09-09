@@ -55,6 +55,31 @@ Additional geometric constraints will be imposed to ensure that the hollow
 cross-section remains physically valid and that adequate propeller
 clearance is maintained.
 
+### 2.1 Fixed Parameters
+
+In addition to the decision variables, the optimization model contains
+several fixed parameters describing the quadcopter configuration, loading,
+material properties, and design requirements. Unlike the decision variables,
+these quantities are not selected by the optimizer.
+
+| Symbol | Description | Value | Units | Basis |
+|---|---|---:|---|---|
+| $B$ | Central body width | 100 | mm | Modeling assumption |
+| $D_p$ | Propeller diameter | 241.3 | mm | Reference 9.5 in propeller |
+| $F_{\mathrm{motor}}$ | Maximum thrust of one motor | TBD | N | Manufacturer data |
+| $n$ | Design load factor | TBD | -- | Design assumption |
+| $F_d$ | Structural design load | Calculated | N | $nF_{\mathrm{motor}}$ |
+| $\rho$ | Arm material density | TBD | kg/m³ | Material data |
+| $E$ | Effective Young's modulus | TBD | GPa | Material data |
+| $\sigma_{\mathrm{allow}}$ | Allowable bending stress | TBD | MPa | Material/design requirement |
+| $C_{\min}$ | Minimum propeller tip clearance | TBD | mm | Design requirement |
+| $\delta_{\mathrm{allow}}$ | Maximum arm-tip deflection | TBD | mm | Design requirement |
+
+Values marked **TBD** will be established using either published
+manufacturer/material data or explicitly stated engineering assumptions.
+This distinction is maintained so that sourced physical properties are not
+confused with requirements selected as part of the modeling process.
+
 ## 3. Objective Function
 
 The objective of this optimization problem is to minimize the structural
