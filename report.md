@@ -66,8 +66,8 @@ these quantities are not selected by the optimizer.
 | Symbol | Description | Value | Units | Basis |
 |---|---|---:|---|---|
 | $B$ | Central body width | 100 | mm | Modeling assumption |
-| $D_p$ | Propeller diameter | 241.3 | mm | T-Motor 9545B manufacturer data |
-| $F_{\mathrm{motor}}$ | Maximum thrust of one motor | 9.00 | N | T-Motor MN2212 KV780 manufacturer test data |
+| $D_p$ | Propeller diameter | 241.3 | mm | T-Motor 9545B manufacturer data [1] |
+| $F_{\mathrm{motor}}$ | Maximum thrust of one motor | 9.00 | N | T-Motor MN2212 KV780 manufacturer test data [1] |
 | $n$ | Design load factor | 1.5 | -- | Modeling assumption |
 | $F_d$ | Structural design load | 13.5 | N | Calculated as $nF_{\mathrm{motor}}$ |
 | $\rho$ | Effective carbon-fiber composite density | 1520 | kg/m³ | Rock West Composites material data [2] |
