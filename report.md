@@ -65,8 +65,8 @@ these quantities are not selected by the optimizer.
 | Symbol | Description | Value | Units | Basis |
 |---|---|---:|---|---|
 | $B$ | Central body width | 100 | mm | Modeling assumption |
-| $D_p$ | Propeller diameter | 241.3 | mm | Reference 9.5 in propeller |
-| $F_{\mathrm{motor}}$ | Maximum thrust of one motor | TBD | N | Manufacturer data |
+| $D_p$ | Propeller diameter | 241.3 | mm | T-Motor 9545B manufacturer data |
+| $F_{\mathrm{motor}}$ | Maximum thrust of one motor | 9.00 | N | T-Motor MN2212 KV780 manufacturer test data |
 | $n$ | Design load factor | TBD | -- | Design assumption |
 | $F_d$ | Structural design load | Calculated | N | $nF_{\mathrm{motor}}$ |
 | $\rho$ | Arm material density | TBD | kg/m³ | Material data |
@@ -426,3 +426,8 @@ dynamic loading, detailed composite-material behavior, additional failure
 modes, and optimization of other quadcopter components.
    
 ## References
+
+1. T-Motor. "MN2212 V2.0 UAV Motor - High Strength Construction & Super
+   Balance." Manufacturer specifications and test data for the MN2212 V2.0
+   KV780 motor with T-Motor 9545B propeller. Accessed September 2026.
+   https://store.tmotor.com/product/mn2212-v2-motor-navigator-type.html
