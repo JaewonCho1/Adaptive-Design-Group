@@ -33,7 +33,7 @@ of each arm.
 
 | Variable | Description | Units | Lower Bound | Upper Bound | Type |
 |---|---|---|---:|---:|---|
-| $L$ | Structural arm length from body to motor | mm | 140 | 220 | Continuous |
+| $L$ | Structural arm length from body to motor | mm | 100 | 220 | Continuous |
 | $b$ | Outer width of the arm cross-section | mm | 10 | 30 | Continuous |
 | $h$ | Outer height of the arm cross-section | mm | 10 | 40 | Continuous |
 | $t$ | Wall thickness of the hollow arm | mm | 0.5 | 3.0 | Continuous |
@@ -44,10 +44,11 @@ $$
 \mathbf{x} = [L,\ b,\ h,\ t]^T.
 $$
 
-Arm length $L$ affects the overall frame geometry, structural mass, and
-bending loads. The dimensions $b$, $h$, and $t$ determine the amount and
-distribution of material in each arm, which affects its mass, strength,
-and stiffness.
+The arm-length search bound is intentionally broader than the minimum
+length required for propeller clearance. Designs near the lower bound may
+therefore be infeasible, allowing the propeller-clearance constraint to
+determine the minimum physically acceptable arm length rather than imposing
+that value directly through the variable bounds.
 
 The variables are restricted to the bounds shown above to maintain a
 realistic design space for the selected quadcopter configuration.
@@ -67,18 +68,15 @@ these quantities are not selected by the optimizer.
 | $B$ | Central body width | 100 | mm | Modeling assumption |
 | $D_p$ | Propeller diameter | 241.3 | mm | T-Motor 9545B manufacturer data |
 | $F_{\mathrm{motor}}$ | Maximum thrust of one motor | 9.00 | N | T-Motor MN2212 KV780 manufacturer test data |
-| $n$ | Design load factor | TBD | -- | Design assumption |
-| $F_d$ | Structural design load | Calculated | N | $nF_{\mathrm{motor}}$ |
-| $\rho$ | Arm material density | TBD | kg/m³ | Material data |
-| $E$ | Effective Young's modulus | TBD | GPa | Material data |
-| $\sigma_{\mathrm{allow}}$ | Allowable bending stress | TBD | MPa | Material/design requirement |
-| $C_{\min}$ | Minimum propeller tip clearance | TBD | mm | Design requirement |
-| $\delta_{\mathrm{allow}}$ | Maximum arm-tip deflection | TBD | mm | Design requirement |
-
-Values marked **TBD** will be established using either published
-manufacturer/material data or explicitly stated engineering assumptions.
-This distinction is maintained so that sourced physical properties are not
-confused with requirements selected as part of the modeling process.
+| $n$ | Design load factor | 1.5 | -- | Modeling assumption |
+| $F_d$ | Structural design load | 13.5 | N | Calculated as $nF_{\mathrm{motor}}$ |
+| $\rho$ | Effective carbon-fiber composite density | 1520 | kg/m³ | Rock West Composites material data [2] |
+| $E$ | Effective flexural modulus | 125 | GPa | T300/epoxy composite data [3] |
+| $FS$ | Material strength factor of safety | 2.0 | -- | Modeling assumption |
+| $\sigma_{\mathrm{allow}}$ | Allowable bending stress | 905 | MPa | Calculated from T300/epoxy flexural strength using $FS=2.0$ [3] |
+| $C_{\min}$ | Minimum propeller tip clearance | 10 | mm | Design requirement |
+| $k_\delta$ | Maximum tip-deflection ratio | 0.01 | -- | Design requirement |
+| $\sigma_{\mathrm{allow}}$ | Allowable bending stress | 905 | MPa | Calculated as $\sigma_{\mathrm{strength}}/FS$ using T300/epoxy flexural strength [3] |
 
 ## 3. Objective Function
 
@@ -190,9 +188,18 @@ L \geq
 \frac{D_p+C_{\min}-B}{\sqrt{2}}.
 $$
 
-For the reference configuration, a $100$ mm square central body and a
-$241.3$ mm (9.5 in) propeller diameter are assumed. A minimum propeller
-tip clearance will be specified as a fixed design parameter.
+For the reference configuration, the central body width is assumed to be
+$B=100$ mm and the propeller diameter is $D_p=241.3$ mm. A minimum
+tip-to-tip propeller clearance of $C_{\min}=10$ mm is imposed as a design
+requirement. Therefore, the minimum arm length imposed by propeller
+clearance is
+
+$L \geq 107.0$ mm.
+
+The general decision-variable bound permits $L$ to be as small as 100 mm,
+so designs between 100 mm and approximately 107 mm are allowed in the
+search space but are infeasible because they violate the propeller-clearance
+constraint.
 
 ### 4.3 Structural Stress
 
@@ -282,24 +289,26 @@ be written directly in terms of the design variables as
 =
 \frac{F_dL^3}{3E I(b,h,t)}
 ```
+The allowable tip deflection is defined relative to the arm length using
+
+$ \delta_{\mathrm{allow}} = k_\delta L, $
+
+where $k_\delta=0.01$ is an assumed maximum tip-deflection ratio.
+Therefore, the motor-end deflection is limited to 1% of the structural
+arm length.
 
 The stiffness constraint is therefore
 
-```math
-\delta_{\max}(L,b,h,t)
-\leq
-\delta_{\mathrm{allow}}
-```
+$ \delta_{\max}(L,b,h,t) \leq 0.01L. $
 
-where $\delta_{\mathrm{allow}}$ is the maximum allowable motor-end
-deflection. This constraint prevents the optimizer from selecting a
-minimum-mass arm geometry that satisfies the strength requirement but is
-too flexible for the intended structural application.
+Substituting the cantilever-beam deflection model gives
 
-where $\delta_{\mathrm{allow}}$ is the maximum allowable motor-end
-deflection. This constraint prevents the optimizer from selecting a
-minimum-mass arm geometry that satisfies the strength requirement but is
-too flexible for the intended structural application.
+$ \frac{F_dL^3}{3E I(b,h,t)} \leq 0.01L. $
+
+This requirement is a design assumption rather than a universal
+quadcopter standard. It prevents the optimizer from selecting a
+minimum-mass arm geometry that satisfies the strength requirement but
+experiences excessive elastic deformation.
 
 ## 5. Problem Classification
 
@@ -382,17 +391,25 @@ quadcopter arm design.
    for estimating stress and deflection.
 
 3. **Equivalent static loading:** Motor loading is represented using the
-   design load $F_d=nF_{\mathrm{motor}}$, where $F_{\mathrm{motor}}$ is the
-   reference maximum motor thrust and $n$ is a design load factor. This
-   provides a simplified margin for loading effects that are not explicitly
-   represented by the static beam model.
+   design load $F_d=nF_{\mathrm{motor}}$. A design load factor of $n=1.5$
+   is assumed, increasing the manufacturer-reported maximum motor thrust by
+   50%. With $F_{\mathrm{motor}}=9.00$ N, the resulting structural design
+   load is $F_d=13.5$ N. The load factor is a modeling assumption intended
+   to provide additional margin for loading effects that are not explicitly
+   represented by the simplified static beam model; it is not a
+   manufacturer-specified requirement.
 
-4. **Effective material properties:** The arm material is modeled using a
-   fixed Young's modulus $E$, density $\rho$, and allowable stress
-   $\sigma_{\mathrm{allow}}$. Carbon-fiber composites are anisotropic in
-   reality, so these values represent effective properties for the primary
-   structural loading direction rather than a complete composite-material
-   model.
+   
+4. **Effective material properties:** The arm material is represented using
+   effective carbon-fiber composite properties. A density of
+   $\rho=1520$ kg/m³ and effective flexural modulus of $E=125$ GPa are
+   used based on published composite data [2,3]. A reference T300/epoxy
+   flexural strength of 1810 MPa [3] is reduced using an assumed material
+   strength factor of safety of $FS=2.0$, resulting in
+   $\sigma_{\mathrm{allow}}=905$ MPa. Because carbon-fiber composites are
+   anisotropic and strongly dependent on layup and manufacturing, these
+   values represent a simplified effective material model rather than a
+   detailed laminate analysis.
 
 5. **Constant cross-section:** Each arm is assumed to have a uniform hollow
    rectangular cross-section along its entire length. Therefore, the
@@ -416,7 +433,9 @@ quadcopter arm design.
    torsion, local buckling, fatigue, vibration, resonance, connection
    failure, composite delamination, and impact loading are not explicitly
    modeled. These effects could be considered in a higher-fidelity
-   structural analysis.
+   structural analysis. The maximum allowable motor-end deflection is assumed to be 1% of the
+structural arm length. This value is treated as a design requirement
+rather than an externally specified industry standard.
 
 These assumptions allow the optimization problem to focus on the
 relationship between arm geometry, structural mass, strength, stiffness,
@@ -431,3 +450,16 @@ modes, and optimization of other quadcopter components.
    Balance." Manufacturer specifications and test data for the MN2212 V2.0
    KV780 motor with T-Motor 9545B propeller. Accessed September 2026.
    https://store.tmotor.com/product/mn2212-v2-motor-navigator-type.html
+
+2. Rock West Composites. "Carbon Fiber Rectangular Tube, Thin Wall,
+   All Fabric Twill." Manufacturer material and engineering data.
+   Volumetric density reported as 0.055 lb/in³.
+   Accessed September 2026.
+   https://www.rockwestcomposites.com/25522.html
+
+3. Toray Carbon Fibers America, Inc. "T300 Data Sheet."
+   T300 carbon-fiber/epoxy composite properties normalized to 60% fiber
+   volume. Composite flexural modulus reported as 125 GPa and flexural
+   strength as 1810 MPa.
+   Accessed September 2026.
+   https://dragonplate.com/images/uploaded/PDFs/FiberSpecs/CFA-Std-Modulus-T300.pdf
