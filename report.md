@@ -27,6 +27,34 @@ clearance, and geometric constraints?
 
 ## 2. Decision Variables
 
+The quadcopter frame is modeled using four identical hollow rectangular
+arms. Four continuous decision variables are used to define the geometry
+of each arm.
+
+| Variable | Description | Units | Lower Bound | Upper Bound | Type |
+|---|---|---|---:|---:|---|
+| $L$ | Structural arm length from body to motor | mm | 140 | 220 | Continuous |
+| $b$ | Outer width of the arm cross-section | mm | 10 | 30 | Continuous |
+| $h$ | Outer height of the arm cross-section | mm | 10 | 40 | Continuous |
+| $t$ | Wall thickness of the hollow arm | mm | 0.5 | 3.0 | Continuous |
+
+The design vector is
+
+$$
+\mathbf{x} = [L,\ b,\ h,\ t]^T.
+$$
+
+Arm length $L$ affects the overall frame geometry, structural mass, and
+bending loads. The dimensions $b$, $h$, and $t$ determine the amount and
+distribution of material in each arm, which affects its mass, strength,
+and stiffness.
+
+The variables are restricted to the bounds shown above to maintain a
+realistic design space for the selected quadcopter configuration.
+Additional geometric constraints will be imposed to ensure that the hollow
+cross-section remains physically valid and that adequate propeller
+clearance is maintained.
+
 ## 3. Objective Function
 
 ## 4. Constraints
