@@ -53,6 +53,25 @@ $$
 
 The spring constants are treated as fixed parameters during each optimization problem. The ratio $r$ will be varied between experiments to study its effect on numerical conditioning.
 
+### 2.1.1 Variable and Parameter Summary
+
+| Symbol | Description | Units | Dimension | Type | Bounds / Role |
+|---|---|---|---:|---|---|
+| $x_1$ | Displacement of node 1 | displacement units | 1 | Continuous | Unbounded in the simplified linear model |
+| $x_2$ | Displacement of node 2 | displacement units | 1 | Continuous | Unbounded in the simplified linear model |
+| $x_3$ | Displacement of node 3 | displacement units | 1 | Continuous | Unbounded in the simplified linear model |
+| $k_{\text{soft}}$ | Soft spring stiffness | force/displacement | 1 | Parameter | Fixed at 1 in the numerical study |
+| $k_{\text{stiff}}$ | Stiff spring stiffness | force/displacement | 1 | Parameter | Varied through the stiffness ratio |
+| $r$ | Stiffness ratio | dimensionless | 1 | Parameter | $1$ to $10{,}000$ |
+
+The decision vector is
+
+$$\mathbf{x}\in\mathbb{R}^3$$
+
+and contains three continuous displacement variables.
+
+The problem is an unconstrained, continuous, convex quadratic optimization problem. Because the stiffness matrix is symmetric positive definite for the tested cases, the objective has a unique global minimizer.
+
 ### 2.2 Objective Function
 
 For a linear spring with stiffness $k$ and displacement $\Delta x$, the stored elastic potential energy is
