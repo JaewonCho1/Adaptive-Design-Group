@@ -155,6 +155,89 @@ This relationship will be used to investigate how increasing the stiffness contr
 
 ## 3. Ill-Conditioning Mechanism
 
+### 3.1 Small Numerical Verification Case
+
+Before studying larger stiffness ratios, a small three-node system was used to verify the stiffness matrix formulation and numerical calculations.
+
+For the initial case,
+
+$$
+k_{\text{soft}} = 1
+$$
+
+and
+
+$$
+k_{\text{stiff}} = 10
+$$
+
+giving a stiffness ratio of
+
+$$
+r = \frac{k_{\text{stiff}}}{k_{\text{soft}}} = 10.
+$$
+
+The resulting stiffness matrix was
+
+$$
+K =
+\begin{bmatrix}
+11 & -10 & 0 \\
+-10 & 11 & -1 \\
+0 & -1 & 11
+\end{bmatrix}.
+$$
+
+The computed eigenvalues were approximately
+
+$$
+\lambda =
+\begin{bmatrix}
+0.9501,\ 11.0000,\ 21.0499
+\end{bmatrix}.
+$$
+
+Using the largest and smallest eigenvalues, the 2-norm condition number was
+
+$$
+\kappa(K)
+=
+\frac{21.0499}{0.9501}
+\approx 22.15.
+$$
+
+For an external force vector
+
+$$
+\mathbf{f} =
+\begin{bmatrix}
+0 \\
+1 \\
+0
+\end{bmatrix},
+$$
+
+the equilibrium displacement was
+
+$$
+\mathbf{x}^* =
+\begin{bmatrix}
+0.50 \\
+0.55 \\
+0.05
+\end{bmatrix}.
+$$
+
+Substituting this solution into the gradient expression
+
+$$
+\nabla\Pi(\mathbf{x}) = K\mathbf{x}-\mathbf{f}
+$$
+
+produced values on the order of $10^{-16}$, which is effectively zero within floating-point precision. This verifies that the computed displacement corresponds to the minimum-energy equilibrium configuration.
+
+This initial case confirms that the numerical implementation is consistent with the analytical stiffness matrix formulation. The next step is to systematically increase the stiffness ratio and measure how the eigenvalue spread and condition number change.
+
 ## 4. Effect of Ill-Conditioning
 
 ## 5. Proposed Solution and Demonstration
