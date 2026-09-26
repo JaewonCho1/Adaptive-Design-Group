@@ -109,11 +109,7 @@ $$
 
 The optimization problem is therefore
 
-$$
-\boxed{
-\min_{\mathbf{x}} \; \Pi(\mathbf{x})
-}
-$$
+$$\boxed{\min_{\mathbf{x}} \Pi(\mathbf{x})}$$
 
 The minimum of the total potential energy corresponds to the mechanical equilibrium configuration of the spring system. Because the two end supports are fixed, the system has no rigid-body translation and no additional displacement constraints are required for this simplified model.
 
