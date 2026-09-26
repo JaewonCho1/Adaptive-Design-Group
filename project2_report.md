@@ -98,6 +98,61 @@ $$
 
 The minimum of the total potential energy corresponds to the mechanical equilibrium configuration of the spring system. Because the two end supports are fixed, the system has no rigid-body translation and no additional displacement constraints are required for this simplified model.
 
+### 2.3 Matrix Formulation
+
+The total potential energy can be written in quadratic matrix form as
+
+$$\Pi(\mathbf{x}) = \frac{1}{2}\mathbf{x}^T K\mathbf{x} - \mathbf{f}^T\mathbf{x}$$
+
+where $K$ is the stiffness matrix of the spring system. For the three-node, four-spring model,
+
+$$
+K =
+\begin{bmatrix}
+k_1+k_2 & -k_2 & 0 \\
+-k_2 & k_2+k_3 & -k_3 \\
+0 & -k_3 & k_3+k_4
+\end{bmatrix}
+$$
+
+The diagonal entries represent the sum of the spring stiffnesses connected to each movable node. The off-diagonal entries represent coupling between adjacent nodes.
+
+Taking the gradient of the objective gives
+
+$$
+\nabla \Pi(\mathbf{x}) = K\mathbf{x}-\mathbf{f}
+$$
+
+At the minimum-energy configuration,
+
+$$
+\nabla \Pi(\mathbf{x}^*)=0
+$$
+
+which gives
+
+$$
+K\mathbf{x}^*=\mathbf{f}
+$$
+
+Therefore, minimizing the total potential energy is equivalent to solving the mechanical equilibrium equations for the spring system.
+
+The Hessian of the objective is
+
+$$
+H = \nabla^2\Pi(\mathbf{x}) = K
+$$
+
+Because the Hessian is equal to the stiffness matrix, the numerical conditioning of the optimization problem can be studied directly through the eigenvalues of $K$. For a symmetric positive-definite stiffness matrix, the 2-norm condition number is
+
+$$
+\kappa(K) =
+\frac{\lambda_{\max}(K)}
+{\lambda_{\min}(K)}
+$$
+
+This relationship will be used to investigate how increasing the stiffness contrast affects the conditioning of the optimization problem.
+
 ## 3. Ill-Conditioning Mechanism
 
 ## 4. Effect of Ill-Conditioning
