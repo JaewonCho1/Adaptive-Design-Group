@@ -289,6 +289,49 @@ This result shows that the poor conditioning is not caused only by trivial coord
 
 ## 4. Effect of Ill-Conditioning
 
+### 4.1 Baseline Gradient Descent Performance
+
+To evaluate the practical effect of ill-conditioning, standard gradient descent was applied to the spring-system objective
+
+$$\Pi(\mathbf{x}) = \frac{1}{2}\mathbf{x}^T K\mathbf{x} - \mathbf{f}^T\mathbf{x}$$
+
+using the gradient
+
+$$\nabla\Pi(\mathbf{x}) = K\mathbf{x}-\mathbf{f}$$
+
+The same initial point and stopping tolerance were used for each stiffness ratio. A constant step size based on the minimum and maximum eigenvalues of the stiffness matrix was selected as
+
+$$\alpha = \frac{2}{\lambda_{\min}+\lambda_{\max}}$$
+
+This step size provides a reasonable comparison because it accounts for the curvature of each quadratic problem rather than intentionally using a poor learning rate.
+
+The measured convergence results were:
+
+| Stiffness Ratio $r$ | Condition Number $\kappa(K)$ | Gradient Descent Iterations |
+|---:|---:|---:|
+| 1 | 5.83 | 55 |
+| 10 | 22.15 | 205 |
+| 100 | 202.02 | 1,862 |
+| 1,000 | 2,002.00 | 18,440 |
+
+The number of iterations increases substantially as the condition number increases. For the larger tested cases, the iteration count is approximately proportional to the condition number.
+
+For example,
+
+$$\frac{18{,}440}{2{,}002} \approx 9.21$$
+
+while
+
+$$\frac{1{,}862}{202.02} \approx 9.22$$
+
+showing that, for the selected stopping tolerance and step-size rule, the iteration requirement scales approximately linearly with the condition number.
+
+![Gradient descent convergence](figures/project2_gradient_descent_convergence.png)
+
+![Gradient norm convergence](figures/project2_gradient_norm_convergence.png)
+
+These results demonstrate the practical consequence of ill-conditioning. As the stiffness contrast increases, the energy landscape develops increasingly different curvatures along different directions. Gradient descent therefore requires many more iterations to reach the same convergence tolerance, even when a curvature-based step size is used.
+
 ## 5. Proposed Solution and Demonstration
 
 ## 6. Assumptions and Simplifications
