@@ -161,21 +161,15 @@ Before studying larger stiffness ratios, a small three-node system was used to v
 
 For the initial case,
 
-$$
-k_{\text{soft}} = 1
-$$
+$$k_{\text{soft}} = 1$$
 
 and
 
-$$
-k_{\text{stiff}} = 10
-$$
+$$k_{\text{stiff}} = 10$$
 
 giving a stiffness ratio of
 
-$$
-r = \frac{k_{\text{stiff}}}{k_{\text{soft}}} = 10.
-$$
+$$r = \frac{k_{\text{stiff}}}{k_{\text{soft}}} = 10$$
 
 The resulting stiffness matrix was
 
@@ -185,7 +179,7 @@ K =
 11 & -10 & 0 \\
 -10 & 11 & -1 \\
 0 & -1 & 11
-\end{bmatrix}.
+\end{bmatrix}
 $$
 
 The computed eigenvalues were approximately
@@ -194,17 +188,12 @@ $$
 \lambda =
 \begin{bmatrix}
 0.9501,\ 11.0000,\ 21.0499
-\end{bmatrix}.
+\end{bmatrix}
 $$
 
 Using the largest and smallest eigenvalues, the 2-norm condition number was
 
-$$
-\kappa(K)
-=
-\frac{21.0499}{0.9501}
-\approx 22.15.
-$$
+$$\kappa(K) = \frac{21.0499}{0.9501} \approx 22.15$$
 
 For an external force vector
 
@@ -214,7 +203,7 @@ $$
 0 \\
 1 \\
 0
-\end{bmatrix},
+\end{bmatrix}
 $$
 
 the equilibrium displacement was
@@ -225,14 +214,12 @@ $$
 0.50 \\
 0.55 \\
 0.05
-\end{bmatrix}.
+\end{bmatrix}
 $$
 
 Substituting this solution into the gradient expression
 
-$$
-\nabla\Pi(\mathbf{x}) = K\mathbf{x}-\mathbf{f}
-$$
+$$\nabla\Pi(\mathbf{x}) = K\mathbf{x}-\mathbf{f}$$
 
 produced values on the order of $10^{-16}$, which is effectively zero within floating-point precision. This verifies that the computed displacement corresponds to the minimum-energy equilibrium configuration.
 
