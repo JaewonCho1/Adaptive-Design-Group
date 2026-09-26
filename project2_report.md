@@ -390,3 +390,47 @@ In larger engineering problems, forming, storing, and factorizing the Hessian ca
 For the present project, Newton's method provides a clear demonstration that using curvature information can eliminate the slow convergence observed with gradient descent on the ill-conditioned spring system.
 
 ## 6. Assumptions and Simplifications
+
+### 6.1 Modeling Assumptions
+
+The spring system used in this project is intentionally simplified so that the effect of ill-conditioning can be isolated and studied clearly.
+
+The main assumptions are:
+
+- The system is one-dimensional, so each movable node has only one displacement degree of freedom.
+- All springs are linear and follow Hooke's law.
+- Deformations are assumed to be small enough that geometric nonlinearities can be neglected.
+- The two end supports are fixed.
+- Spring masses and node masses are neglected because the problem is treated as a static equilibrium problem rather than a dynamic system.
+- The applied external force is deterministic and does not change during each optimization problem.
+- The soft spring stiffness is held fixed at $k_{\text{soft}}=1$, while the stiff spring stiffness is varied through the ratio
+
+$$r = \frac{k_{\text{stiff}}}{k_{\text{soft}}}$$
+
+- The optimization objective is exactly quadratic, causing the Hessian to remain constant and equal to the stiffness matrix.
+
+### 6.2 Numerical Assumptions
+
+The stiffness matrix is symmetric positive definite for the tested cases, allowing the condition number to be computed as the ratio of the largest to smallest eigenvalue.
+
+The exact equilibrium solution
+
+$$K\mathbf{x}^*=\mathbf{f}$$
+
+is used as a reference solution when evaluating optimization error.
+
+For the gradient descent experiments, the same initial point and relative stopping tolerance are used for all tested stiffness ratios. The step size is selected using
+
+$$\alpha = \frac{2}{\lambda_{\min}+\lambda_{\max}}$$
+
+so that the comparison focuses on the effect of conditioning rather than intentionally using a poor learning rate.
+
+Objective-error values below approximately $10^{-14}$ are not interpreted physically because floating-point roundoff becomes significant near machine precision. The convergence plots therefore use a numerical floor to avoid displaying roundoff noise.
+
+### 6.3 Scope of the Results
+
+The results demonstrate the effect of ill-conditioning for a small mixed-stiffness spring system. The same qualitative behavior can occur in larger structural systems containing components with widely different stiffnesses, but the exact condition numbers and convergence rates depend on the geometry, connectivity, loading, and solver used.
+
+Newton's one-step convergence in this project is a consequence of the exact quadratic objective and constant Hessian. For general nonlinear or large-scale engineering optimization problems, Newton's method may require multiple iterations and can be expensive because of Hessian formation and factorization.
+
+The purpose of this simplified model is therefore not to represent a complete real structure, but to provide a clear mechanical example showing the relationship between stiffness contrast, ill-conditioning, and optimization convergence.
