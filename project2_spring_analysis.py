@@ -1,54 +1,83 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 # --------------------------------------------------
 # Project II: Mixed-Stiffness Spring System
-# Small 3-node / 4-spring verification case
+# Conditioning study
 # --------------------------------------------------
 
-# Spring stiffness values
+# Soft spring stiffness is held constant
 k_soft = 1.0
-k_stiff = 10.0
 
-# Alternating soft and stiff springs
-k1 = k_soft
-k2 = k_stiff
-k3 = k_soft
-k4 = k_stiff
+# Stiffness ratios to test
+ratios = np.array([1, 10, 100, 1000, 10000], dtype=float)
 
-# Assemble the 3x3 stiffness matrix
-K = np.array([
-    [k1 + k2,   -k2,          0.0],
-    [-k2,        k2 + k3,    -k3],
-    [0.0,       -k3,          k3 + k4]
-])
+# Lists for storing results
+condition_numbers = []
+smallest_eigenvalues = []
+largest_eigenvalues = []
 
-# Simple external force vector
-f = np.array([0.0, 1.0, 0.0])
+print("Mixed-Stiffness Spring Conditioning Study")
+print("-" * 50)
 
-# Compute eigenvalues of the stiffness matrix
-eigenvalues = np.linalg.eigvalsh(K)
+for r in ratios:
 
-# Compute the 2-norm condition number
-condition_number = np.linalg.cond(K, 2)
+    # Define alternating soft and stiff springs
+    k1 = k_soft
+    k2 = r * k_soft
+    k3 = k_soft
+    k4 = r * k_soft
 
-# Solve Kx = f for the equilibrium displacement
-x_star = np.linalg.solve(K, f)
+    # Assemble stiffness matrix
+    K = np.array([
+        [k1 + k2, -k2,       0.0],
+        [-k2,      k2 + k3, -k3],
+        [0.0,     -k3,       k3 + k4]
+    ])
 
-# Compute the gradient at the solution
-gradient_at_solution = K @ x_star - f
+    # Compute eigenvalues
+    eigenvalues = np.linalg.eigvalsh(K)
 
-# Display results
-print("Stiffness matrix K:")
-print(K)
+    # Smallest and largest eigenvalues
+    lambda_min = eigenvalues[0]
+    lambda_max = eigenvalues[-1]
 
-print("\nEigenvalues of K:")
-print(eigenvalues)
+    # Compute 2-norm condition number
+    kappa = np.linalg.cond(K, 2)
 
-print("\nCondition number of K:")
-print(condition_number)
+    # Store results
+    smallest_eigenvalues.append(lambda_min)
+    largest_eigenvalues.append(lambda_max)
+    condition_numbers.append(kappa)
 
-print("\nEquilibrium displacement x*:")
-print(x_star)
+    # Print results for this stiffness ratio
+    print(f"\nStiffness ratio r = {r:.0f}")
+    print("Eigenvalues:", eigenvalues)
+    print(f"Condition number = {kappa:.6f}")
 
-print("\nGradient at x*:")
-print(gradient_at_solution)
+# Convert lists to NumPy arrays
+condition_numbers = np.array(condition_numbers)
+smallest_eigenvalues = np.array(smallest_eigenvalues)
+largest_eigenvalues = np.array(largest_eigenvalues)
+
+# --------------------------------------------------
+# Plot condition number versus stiffness ratio
+# --------------------------------------------------
+
+plt.figure()
+
+plt.loglog(
+    ratios,
+    condition_numbers,
+    marker="o"
+)
+
+plt.xlabel("Stiffness Ratio r = k_stiff / k_soft")
+plt.ylabel("Condition Number kappa(K)")
+plt.title("Effect of Stiffness Contrast on Conditioning")
+
+plt.grid(True, which="both")
+
+plt.tight_layout()
+plt.savefig("figures/project2_condition_number.png", dpi=300)
+plt.show()
