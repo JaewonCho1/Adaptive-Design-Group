@@ -158,7 +158,6 @@ def gradient_descent(K, f, x0, tol=1e-8, max_iterations=200000):
 
     # Exact solution used only as a reference
     x_star = np.linalg.solve(K, f)
-    f_star = objective(x_star, K, f)
 
     objective_errors = []
     gradient_norms = []
@@ -172,9 +171,9 @@ def gradient_descent(K, f, x0, tol=1e-8, max_iterations=200000):
         error = x - x_star
         objective_error = 0.5 * error @ K @ error
         gradient_norm = np.linalg.norm(g)
-
-        objective_errors.append(max(objective_error, 1e-30))
-        gradient_norms.append(max(gradient_norm, 1e-30))
+        
+        objective_errors.append(max(objective_error, 1e-14))
+        gradient_norms.append(max(gradient_norm, 1e-14))
 
         # Relative stopping condition
         if gradient_norm <= tol * initial_gradient_norm:
@@ -254,6 +253,8 @@ plt.xlabel("Iteration")
 plt.ylabel("Objective Error")
 plt.title("Gradient Descent Convergence")
 
+plt.ylim(bottom=1e-14)
+
 plt.grid(True, which="both")
 plt.legend()
 
@@ -283,6 +284,8 @@ for r in gd_ratios:
 plt.xlabel("Iteration")
 plt.ylabel("Gradient Norm")
 plt.title("Gradient Descent Gradient-Norm Convergence")
+
+plt.ylim(bottom=1e-14)
 
 plt.grid(True, which="both")
 plt.legend()
