@@ -334,4 +334,59 @@ These results demonstrate the practical consequence of ill-conditioning. As the 
 
 ## 5. Proposed Solution and Demonstration
 
+### 5.1 Newton's Method as a Remedy
+
+The baseline gradient descent results showed that convergence becomes much slower as the condition number increases. To reduce the effect of this ill-conditioning, Newton's method was applied to the same spring-system optimization problem.
+
+For the quadratic objective
+
+$$\Pi(\mathbf{x}) = \frac{1}{2}\mathbf{x}^T K\mathbf{x} - \mathbf{f}^T\mathbf{x}$$
+
+the gradient is
+
+$$\nabla\Pi(\mathbf{x}) = K\mathbf{x}-\mathbf{f}$$
+
+and the Hessian is
+
+$$H = K$$
+
+Newton's method updates the design variables according to
+
+$$\mathbf{x}_{k+1} = \mathbf{x}_k - H^{-1}\nabla\Pi(\mathbf{x}_k)$$
+
+Since $H=K$ for this problem,
+
+$$\mathbf{x}_{k+1} = \mathbf{x}_k - K^{-1}(K\mathbf{x}_k-\mathbf{f})$$
+
+which simplifies to
+
+$$\mathbf{x}_{k+1} = K^{-1}\mathbf{f}$$
+
+Therefore, for this exact quadratic objective, Newton's method reaches the equilibrium solution in a single iteration when the exact Hessian is used.
+
+### 5.2 Gradient Descent vs. Newton's Method
+
+The two methods were compared using the same spring systems and stiffness ratios used in the baseline convergence study.
+
+| Stiffness Ratio $r$ | Condition Number $\kappa(K)$ | Gradient Descent Iterations | Newton Iterations |
+|---:|---:|---:|---:|
+| 1 | 5.83 | 55 | 1 |
+| 10 | 22.15 | 205 | 1 |
+| 100 | 202.02 | 1,862 | 1 |
+| 1,000 | 2,002.00 | 18,440 | 1 |
+
+The results show that the number of gradient descent iterations increases rapidly as the problem becomes more ill-conditioned. In contrast, Newton's method reaches the exact quadratic solution in one iteration for every tested stiffness ratio.
+
+![Gradient descent versus Newton method](figures/project2_method_comparison.png)
+
+This comparison demonstrates how curvature information can dramatically improve optimization performance for an ill-conditioned quadratic problem. Gradient descent uses only first-order information and therefore becomes increasingly sensitive to the large difference between the steep and flat directions of the energy landscape. Newton's method uses the Hessian directly and compensates for these differences in curvature.
+
+### 5.3 Limitations of the Remedy
+
+The one-step convergence observed here is a special property of the quadratic spring-system objective with a constant, exactly known Hessian. Newton's method is not expected to converge in one iteration for a general nonlinear optimization problem.
+
+In larger engineering problems, forming, storing, and factorizing the Hessian can also be computationally expensive. Therefore, methods such as quasi-Newton methods, conjugate-gradient methods, or preconditioning may be more practical for large-scale systems.
+
+For the present project, Newton's method provides a clear demonstration that using curvature information can eliminate the slow convergence observed with gradient descent on the ill-conditioned spring system.
+
 ## 6. Assumptions and Simplifications
