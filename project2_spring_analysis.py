@@ -76,6 +76,52 @@ largest_eigenvalues = np.array(largest_eigenvalues)
 scaled_condition_numbers = np.array(scaled_condition_numbers)
 
 # --------------------------------------------------
+# D1: Eigenvalue spectrum for a representative
+# ill-conditioned case
+# --------------------------------------------------
+
+spectrum_ratio = 1000.0
+
+k1 = k_soft
+k2 = spectrum_ratio * k_soft
+k3 = k_soft
+k4 = spectrum_ratio * k_soft
+
+K_spectrum = np.array([
+    [k1 + k2, -k2,       0.0],
+    [-k2,      k2 + k3, -k3],
+    [0.0,     -k3,       k3 + k4]
+])
+
+spectrum_eigenvalues = np.linalg.eigvalsh(K_spectrum)
+spectrum_kappa = np.linalg.cond(K_spectrum, 2)
+
+plt.figure()
+
+plt.semilogy(
+    np.arange(1, len(spectrum_eigenvalues) + 1),
+    spectrum_eigenvalues,
+    marker="o"
+)
+
+plt.xlabel("Eigenvalue Index")
+plt.ylabel("Eigenvalue")
+plt.title(
+    f"Stiffness Matrix Spectrum "
+    f"(r = {int(spectrum_ratio)}, kappa = {spectrum_kappa:.0f})"
+)
+
+plt.xticks([1, 2, 3])
+plt.grid(True, which="both")
+
+plt.tight_layout()
+plt.savefig(
+    "figures/project2_eigenvalue_spectrum.png",
+    dpi=300
+)
+plt.show()
+
+# --------------------------------------------------
 # Plot condition number versus stiffness ratio
 # --------------------------------------------------
 
