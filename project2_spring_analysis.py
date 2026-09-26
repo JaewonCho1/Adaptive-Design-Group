@@ -235,6 +235,112 @@ for r in gd_ratios:
 
 
 # --------------------------------------------------
+# Newton method comparison
+# --------------------------------------------------
+
+def newton_method(K, f, x0):
+    x = x0.copy()
+
+    # Gradient at the starting point
+    g = gradient(x, K, f)
+
+    # Solve K p = g for the Newton correction
+    p = np.linalg.solve(K, g)
+
+    # Newton update
+    x = x - p
+
+    return x, 1
+
+
+newton_iterations = []
+gd_iteration_counts = []
+
+print("\nGradient Descent vs Newton Method")
+print("-" * 55)
+
+for r in gd_ratios:
+
+    k1 = k_soft
+    k2 = r * k_soft
+    k3 = k_soft
+    k4 = r * k_soft
+
+    K = np.array([
+        [k1 + k2, -k2,       0.0],
+        [-k2,      k2 + k3, -k3],
+        [0.0,     -k3,       k3 + k4]
+    ])
+
+    # Gradient descent result from previous study
+    gd_iterations = gd_results[r]["iterations"]
+
+    # Newton solution
+    x_newton, newton_iters = newton_method(K, f, x0)
+
+    # Exact equilibrium solution for verification
+    x_star = np.linalg.solve(K, f)
+
+    # Error between Newton result and exact solution
+    newton_error = np.linalg.norm(x_newton - x_star)
+
+    gd_iteration_counts.append(gd_iterations)
+    newton_iterations.append(newton_iters)
+
+    print(
+        f"r = {r:4d} | "
+        f"kappa = {np.linalg.cond(K, 2):10.2f} | "
+        f"GD iterations = {gd_iterations:6d} | "
+        f"Newton iterations = {newton_iters} | "
+        f"Newton error = {newton_error:.2e}"
+    )
+
+
+# --------------------------------------------------
+# Plot iteration comparison
+# --------------------------------------------------
+
+x_positions = np.arange(len(gd_ratios))
+bar_width = 0.35
+
+plt.figure()
+
+plt.bar(
+    x_positions - bar_width / 2,
+    gd_iteration_counts,
+    bar_width,
+    label="Gradient Descent"
+)
+
+plt.bar(
+    x_positions + bar_width / 2,
+    newton_iterations,
+    bar_width,
+    label="Newton Method"
+)
+
+plt.xticks(
+    x_positions,
+    [str(r) for r in gd_ratios]
+)
+
+plt.yscale("log")
+
+plt.xlabel("Stiffness Ratio r")
+plt.ylabel("Iterations to Convergence")
+plt.title("Gradient Descent vs Newton Method")
+
+plt.legend()
+plt.grid(True, which="both", axis="y")
+
+plt.tight_layout()
+plt.savefig(
+    "figures/project2_method_comparison.png",
+    dpi=300
+)
+plt.show()
+
+# --------------------------------------------------
 # Plot objective error convergence
 # --------------------------------------------------
 
