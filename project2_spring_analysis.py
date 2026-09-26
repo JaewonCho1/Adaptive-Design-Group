@@ -108,7 +108,7 @@ plt.xlabel("Eigenvalue Index")
 plt.ylabel("Eigenvalue")
 plt.title(
     f"Stiffness Matrix Spectrum "
-    f"(r = {int(spectrum_ratio)}, kappa = {spectrum_kappa:.0f})"
+    f"(r = {int(spectrum_ratio)}, κ = {spectrum_kappa:.0f})"
 )
 
 plt.xticks([1, 2, 3])
