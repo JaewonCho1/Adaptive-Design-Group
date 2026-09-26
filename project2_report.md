@@ -225,6 +225,68 @@ produced values on the order of $10^{-16}$, which is effectively zero within flo
 
 This initial case confirms that the numerical implementation is consistent with the analytical stiffness matrix formulation. The next step is to systematically increase the stiffness ratio and measure how the eigenvalue spread and condition number change.
 
+### 3.2 Effect of Stiffness Ratio on Conditioning
+
+To investigate how stiffness contrast affects the numerical conditioning of the system, the stiffness ratio
+
+$$r = \frac{k_{\text{stiff}}}{k_{\text{soft}}}$$
+
+was varied from $1$ to $10{,}000$ while keeping
+
+$$k_{\text{soft}} = 1$$
+
+constant.
+
+The resulting condition numbers were approximately:
+
+| Stiffness Ratio $r$ | Condition Number $\kappa(K)$ |
+|---:|---:|
+| 1 | 5.83 |
+| 10 | 22.15 |
+| 100 | 202.02 |
+| 1,000 | 2,002.00 |
+| 10,000 | 20,002.00 |
+
+The condition number increases rapidly as the stiffness contrast increases. For the larger stiffness ratios tested, the observed behavior is approximately proportional to the stiffness ratio, with
+
+$$\kappa(K) \approx 2r$$
+
+This indicates that increasing the difference between the stiff and soft spring constants produces an increasingly ill-conditioned optimization problem.
+
+![Condition number versus stiffness ratio](figures/project2_condition_number.png)
+
+The log-log plot shows that the condition number grows nearly linearly with the stiffness ratio over the larger values of $r$. Physically, this means that the energy landscape develops increasingly different curvatures in different directions as the contrast between the stiff and soft members increases.
+
+### 3.3 Intrinsic Conditioning Test
+
+A diagonal, or Jacobi, scaling test was performed to determine whether the large condition number was caused only by poor numerical scaling of the design variables.
+
+The scaled stiffness matrix was defined as
+
+$$K_{\text{scaled}} = D^{-1/2} K D^{-1/2}$$
+
+where
+
+$$D = \text{diag}(K)$$
+
+For the selected alternating spring system, the diagonal entries of the stiffness matrix are equal to $1+r$. Therefore,
+
+$$D = (1+r)I$$
+
+and the scaled stiffness matrix becomes
+
+$$K_{\text{scaled}} = \frac{1}{1+r}K$$
+
+Multiplying a matrix by a scalar multiplies all of its eigenvalues by the same factor. Therefore, the ratio between the largest and smallest eigenvalues remains unchanged, giving
+
+$$\kappa(K_{\text{scaled}}) = \kappa(K)$$
+
+The numerical results confirm this behavior. The original and diagonally scaled condition numbers overlap across the tested stiffness ratios.
+
+![Intrinsic conditioning test](figures/project2_intrinsic_conditioning.png)
+
+This result shows that the poor conditioning is not caused only by trivial coordinate scaling. Instead, it arises from the structure and coupling of the mixed-stiffness spring system. Therefore, the observed ill-conditioning is intrinsic to the selected problem formulation.
+
 ## 4. Effect of Ill-Conditioning
 
 ## 5. Proposed Solution and Demonstration
