@@ -169,7 +169,8 @@ def gradient_descent(K, f, x0, tol=1e-8, max_iterations=200000):
 
         g = gradient(x, K, f)
 
-        objective_error = objective(x, K, f) - f_star
+        error = x - x_star
+        objective_error = 0.5 * error @ K @ error
         gradient_norm = np.linalg.norm(g)
 
         objective_errors.append(max(objective_error, 1e-30))
