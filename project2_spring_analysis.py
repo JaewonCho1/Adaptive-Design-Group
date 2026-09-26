@@ -130,3 +130,165 @@ plt.savefig(
     dpi=300
 )
 plt.show()
+
+
+# --------------------------------------------------
+# Gradient descent study
+# --------------------------------------------------
+
+def objective(x, K, f):
+    return 0.5 * x @ K @ x - f @ x
+
+
+def gradient(x, K, f):
+    return K @ x - f
+
+
+def gradient_descent(K, f, x0, tol=1e-8, max_iterations=200000):
+    # Eigenvalues determine a stable step size for this quadratic
+    eigenvalues = np.linalg.eigvalsh(K)
+
+    lambda_min = eigenvalues[0]
+    lambda_max = eigenvalues[-1]
+
+    # Near-optimal constant step size for SPD quadratic
+    alpha = 2.0 / (lambda_min + lambda_max)
+
+    x = x0.copy()
+
+    # Exact solution used only as a reference
+    x_star = np.linalg.solve(K, f)
+    f_star = objective(x_star, K, f)
+
+    objective_errors = []
+    gradient_norms = []
+
+    initial_gradient_norm = np.linalg.norm(gradient(x, K, f))
+
+    for iteration in range(max_iterations):
+
+        g = gradient(x, K, f)
+
+        objective_error = objective(x, K, f) - f_star
+        gradient_norm = np.linalg.norm(g)
+
+        objective_errors.append(max(objective_error, 1e-30))
+        gradient_norms.append(max(gradient_norm, 1e-30))
+
+        # Relative stopping condition
+        if gradient_norm <= tol * initial_gradient_norm:
+            break
+
+        x = x - alpha * g
+
+    return (
+        x,
+        np.array(objective_errors),
+        np.array(gradient_norms),
+        iteration + 1
+    )
+
+
+# Ratios used for the convergence comparison
+gd_ratios = [1, 10, 100, 1000]
+
+# Force applied to the middle node
+f = np.array([0.0, 1.0, 0.0])
+
+# Same starting point for every experiment
+x0 = np.zeros(3)
+
+# Store convergence histories
+gd_results = {}
+
+print("\nGradient Descent Convergence Study")
+print("-" * 50)
+
+for r in gd_ratios:
+
+    k1 = k_soft
+    k2 = r * k_soft
+    k3 = k_soft
+    k4 = r * k_soft
+
+    K = np.array([
+        [k1 + k2, -k2,       0.0],
+        [-k2,      k2 + k3, -k3],
+        [0.0,     -k3,       k3 + k4]
+    ])
+
+    x_final, objective_errors, gradient_norms, iterations = (
+        gradient_descent(K, f, x0)
+    )
+
+    gd_results[r] = {
+        "objective_errors": objective_errors,
+        "gradient_norms": gradient_norms,
+        "iterations": iterations
+    }
+
+    print(
+        f"r = {r:4d} | "
+        f"kappa = {np.linalg.cond(K, 2):10.2f} | "
+        f"iterations = {iterations}"
+    )
+
+
+# --------------------------------------------------
+# Plot objective error convergence
+# --------------------------------------------------
+
+plt.figure()
+
+for r in gd_ratios:
+    errors = gd_results[r]["objective_errors"]
+
+    plt.semilogy(
+        range(len(errors)),
+        errors,
+        label=f"r = {r}"
+    )
+
+plt.xlabel("Iteration")
+plt.ylabel("Objective Error")
+plt.title("Gradient Descent Convergence")
+
+plt.grid(True, which="both")
+plt.legend()
+
+plt.tight_layout()
+plt.savefig(
+    "figures/project2_gradient_descent_convergence.png",
+    dpi=300
+)
+plt.show()
+
+
+# --------------------------------------------------
+# Plot gradient norm convergence
+# --------------------------------------------------
+
+plt.figure()
+
+for r in gd_ratios:
+    norms = gd_results[r]["gradient_norms"]
+
+    plt.semilogy(
+        range(len(norms)),
+        norms,
+        label=f"r = {r}"
+    )
+
+plt.xlabel("Iteration")
+plt.ylabel("Gradient Norm")
+plt.title("Gradient Descent Gradient-Norm Convergence")
+
+plt.grid(True, which="both")
+plt.legend()
+
+plt.tight_layout()
+plt.savefig(
+    "figures/project2_gradient_norm_convergence.png",
+    dpi=300
+)
+plt.show()
