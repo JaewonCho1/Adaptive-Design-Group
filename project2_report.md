@@ -308,7 +308,21 @@ This result shows that the poor conditioning is not caused only by trivial coord
 
 ## 4. Effect of Ill-Conditioning
 
-### 4.1 Baseline Gradient Descent Performance
+### 4.1 Eigenvalue Spectrum
+
+The required D1 spectrum diagnostic was evaluated for a representative ill-conditioned case with
+
+$$r = 1000.$$
+
+The stiffness matrix eigenvalues span from a relatively small curvature direction to a much larger curvature direction, producing
+
+$$\kappa(K) \approx 2002.$$
+
+![Eigenvalue spectrum](figures/project2_eigenvalue_spectrum.png)
+
+The large separation between the smallest and largest eigenvalues shows directly why the energy landscape is strongly elongated and why a first-order method such as gradient descent converges slowly.
+
+### 4.2 Baseline Gradient Descent Performance
 
 To evaluate the practical effect of ill-conditioning, standard gradient descent was applied to the spring-system objective
 
