@@ -174,6 +174,8 @@ This relationship will be used to investigate how increasing the stiffness contr
 
 ## 3. Ill-Conditioning Mechanism
 
+This problem belongs to **Family A: multiscale physical parameters**. The mixed soft and stiff spring components cause the Hessian eigenvalues to span increasingly different scales as the stiffness ratio increases.
+
 ### 3.1 Small Numerical Verification Case
 
 Before studying larger stiffness ratios, a small three-node system was used to verify the stiffness matrix formulation and numerical calculations.
