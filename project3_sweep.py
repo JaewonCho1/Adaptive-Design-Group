@@ -23,6 +23,14 @@ FIGURE_DIR.mkdir(exist_ok=True)
 
 RESULTS_FILE = Path("project3_sensor_sweep.csv")
 
+TWO_SENSOR_PREDICTION_FILE = Path(
+    "project3_pinn_2_prediction.npy"
+)
+
+
+# ============================================================
+# Save Numerical Results
+# ============================================================
 
 def save_results_csv(results):
     """
@@ -66,10 +74,13 @@ def save_results_csv(results):
             ])
 
 
+# ============================================================
+# P3: Error vs. Measurement Sparsity
+# ============================================================
+
 def plot_error_vs_sparsity(results):
     """
-    P3:
-    Plot reconstruction error versus measurement sparsity.
+    Plot PINN reconstruction error versus measurement sparsity.
     """
 
     sparsity = [
@@ -125,9 +136,12 @@ def plot_error_vs_sparsity(results):
     plt.close(fig)
 
 
+# ============================================================
+# P5: Training Time vs. Measurement Sparsity
+# ============================================================
+
 def plot_training_time(results):
     """
-    P5:
     Plot PINN training time versus measurement sparsity.
     """
 
@@ -184,6 +198,10 @@ def plot_training_time(results):
     plt.close(fig)
 
 
+# ============================================================
+# Print Final Sweep Summary
+# ============================================================
+
 def print_summary(results):
     """
     Print final sensor-sweep results.
@@ -207,11 +225,12 @@ def print_summary(results):
         f"{'S':>8} "
         f"{'L2 Error':>14} "
         f"{'Error (%)':>14} "
-        f"{'Train (s)':>14}"
+        f"{'Train (s)':>14} "
+        f"{'Infer (s)':>14}"
     )
 
     print(
-        "-" * 65
+        "-" * 85
     )
 
     for result in results:
@@ -221,9 +240,14 @@ def print_summary(results):
             f"{result['sparsity']:8.1f} "
             f"{result['relative_l2']:14.6f} "
             f"{result['percent_error']:14.4f} "
-            f"{result['training_time']:14.2f}"
+            f"{result['training_time']:14.2f} "
+            f"{result['inference_time']:14.6f}"
         )
 
+
+# ============================================================
+# Main Sweep
+# ============================================================
 
 def main():
 
@@ -231,8 +255,9 @@ def main():
         "\nProject 3: Sensor-Sparsity Sweep"
     )
 
+
     # --------------------------------------------------------
-    # Create common ground-truth field
+    # Common ground-truth field
     # --------------------------------------------------------
 
     (
@@ -243,11 +268,12 @@ def main():
         true_temperature
     ) = create_reference_field()
 
+
     results = []
 
 
     # ========================================================
-    # Run all four sensor cases
+    # Run 16, 8, 4, and 2 sensor cases
     # ========================================================
 
     for n_sensors in SENSOR_COUNTS:
@@ -255,6 +281,7 @@ def main():
         sparsity = (
             16 / n_sensors
         )
+
 
         print(
             "\n"
@@ -301,21 +328,42 @@ def main():
             T,
             true_temperature
         )
-        if n_sensors == 2:
-    np.save(
-        "project3_pinn_2_prediction.npy",
-        prediction
-    )
 
 
         # ----------------------------------------------------
-        # Save individual-case plots
+        # Save the actual 2-sensor prediction for
+        # later Fourier/spectral analysis
+        # ----------------------------------------------------
+
+        if n_sensors == 2:
+
+            np.save(
+                TWO_SENSOR_PREDICTION_FILE,
+                prediction
+            )
+
+            print(
+                "\nSaved 2-sensor prediction:"
+            )
+
+            print(
+                TWO_SENSOR_PREDICTION_FILE
+            )
+
+
+        # ----------------------------------------------------
+        # Save loss-history plot
         # ----------------------------------------------------
 
         plot_loss_history(
             history,
             n_sensors
         )
+
+
+        # ----------------------------------------------------
+        # Save reconstruction/error plot
+        # ----------------------------------------------------
 
         plot_reconstruction(
             X,
@@ -328,7 +376,7 @@ def main():
 
 
         # ----------------------------------------------------
-        # Store results
+        # Store numerical results
         # ----------------------------------------------------
 
         results.append({
@@ -366,7 +414,7 @@ def main():
 
 
     # ========================================================
-    # Save summary outputs
+    # Save overall results
     # ========================================================
 
     save_results_csv(
@@ -386,6 +434,10 @@ def main():
     )
 
 
+    # --------------------------------------------------------
+    # Final file summary
+    # --------------------------------------------------------
+
     print(
         "\nFiles created:"
     )
@@ -395,11 +447,47 @@ def main():
     )
 
     print(
+        "project3_pinn_2_prediction.npy"
+    )
+
+    print(
         "figures/project3_error_vs_sparsity.png"
     )
 
     print(
         "figures/project3_training_time_vs_sparsity.png"
+    )
+
+    print(
+        "figures/project3_pinn_16_loss.png"
+    )
+
+    print(
+        "figures/project3_pinn_8_loss.png"
+    )
+
+    print(
+        "figures/project3_pinn_4_loss.png"
+    )
+
+    print(
+        "figures/project3_pinn_2_loss.png"
+    )
+
+    print(
+        "figures/project3_pinn_16_reconstruction.png"
+    )
+
+    print(
+        "figures/project3_pinn_8_reconstruction.png"
+    )
+
+    print(
+        "figures/project3_pinn_4_reconstruction.png"
+    )
+
+    print(
+        "figures/project3_pinn_2_reconstruction.png"
     )
 
 
