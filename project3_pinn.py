@@ -51,7 +51,10 @@ def exact_temperature(x, t, alpha=ALPHA):
 
 
 def create_reference_field():
-    """Create a dense grid representing the true temperature field."""
+    """
+    Create a dense grid representing the true
+    normalized temperature field.
+    """
 
     x = np.linspace(X_MIN, X_MAX, 201)
     t = np.linspace(T_MIN, T_MAX, 101)
@@ -67,9 +70,6 @@ def create_sparse_measurements(n_sensors, n_time_samples=21):
     """
     Generate synthetic measurements at a limited number
     of fixed spatial sensor locations.
-
-    The sensors measure temperature at several times,
-    but only at a small number of spatial positions.
     """
 
     # Interior sensor locations only
@@ -99,36 +99,51 @@ def create_sparse_measurements(n_sensors, n_time_samples=21):
 
 
 def plot_reference_field(X, T, temperature):
-    """Plot the complete analytical temperature field."""
+    """
+    Plot the complete analytical reference field.
+    """
 
-    plt.figure(figsize=(8, 5))
+    fig, ax = plt.subplots(
+        figsize=(9, 5.5)
+    )
 
-    contour = plt.contourf(
+    contour = ax.contourf(
         X,
         T,
         temperature,
         levels=50
     )
 
-    plt.colorbar(
+    cbar = fig.colorbar(
         contour,
-        label="Temperature"
+        ax=ax,
+        pad=0.03
     )
 
-    plt.xlabel("Position, x")
-    plt.ylabel("Time, t")
-    plt.title(
+    cbar.set_label(
+        "Normalized Temperature"
+    )
+
+    ax.set_xlabel(
+        "Position, x"
+    )
+
+    ax.set_ylabel(
+        "Time, t"
+    )
+
+    ax.set_title(
         "Reference Temperature Field"
     )
 
-    plt.tight_layout()
+    fig.tight_layout()
 
-    plt.savefig(
+    fig.savefig(
         FIGURE_DIR / "project3_reference_field.png",
         dpi=300
     )
 
-    plt.close()
+    plt.close(fig)
 
 
 def plot_sparse_measurements():
@@ -137,32 +152,34 @@ def plot_sparse_measurements():
     sensor-sparsity cases.
     """
 
-    fig = plt.figure(figsize=(11, 8))
-
-    # 2 rows, 3 columns:
-    # first two columns = plots
-    # third narrow column = colorbar
-    gs = fig.add_gridspec(
+    # Leave dedicated space on the right for colorbar
+    fig, axes = plt.subplots(
         2,
-        3,
-        width_ratios=[1, 1, 0.05],
-        wspace=0.3,
-        hspace=0.3
+        2,
+        figsize=(11, 8)
     )
 
-    axes = [
-        fig.add_subplot(gs[0, 0]),
-        fig.add_subplot(gs[0, 1]),
-        fig.add_subplot(gs[1, 0]),
-        fig.add_subplot(gs[1, 1])
-    ]
+    fig.subplots_adjust(
+        left=0.08,
+        right=0.84,
+        bottom=0.09,
+        top=0.88,
+        wspace=0.30,
+        hspace=0.35
+    )
 
-    cax = fig.add_subplot(gs[:, 2])
+    axes = axes.flatten()
 
+    # Fixed color scale shared by every subplot
     vmin = -0.2
     vmax = 1.45
 
-    for ax, n_sensors in zip(axes, SENSOR_COUNTS):
+    scatter = None
+
+    for ax, n_sensors in zip(
+        axes,
+        SENSOR_COUNTS
+    ):
 
         X_sensor, T_sensor, temperature_sensor = (
             create_sparse_measurements(n_sensors)
@@ -172,7 +189,7 @@ def plot_sparse_measurements():
             X_sensor.flatten(),
             T_sensor.flatten(),
             c=temperature_sensor.flatten(),
-            s=25,
+            s=28,
             vmin=vmin,
             vmax=vmax
         )
@@ -183,44 +200,63 @@ def plot_sparse_measurements():
             f"{n_sensors} Sensors, S = {sparsity:g}"
         )
 
-        ax.set_xlabel("Position, x")
-        ax.set_ylabel("Time, t")
+        ax.set_xlabel(
+            "Position, x"
+        )
 
-        ax.set_xlim(X_MIN, X_MAX)
-        ax.set_ylim(T_MIN, T_MAX)
+        ax.set_ylabel(
+            "Time, t"
+        )
+
+        ax.set_xlim(
+            X_MIN,
+            X_MAX
+        )
+
+        ax.set_ylim(
+            T_MIN,
+            T_MAX
+        )
+
+    # Create a completely separate colorbar axis
+    cbar_axis = fig.add_axes(
+        [0.88, 0.18, 0.025, 0.62]
+    )
 
     cbar = fig.colorbar(
         scatter,
-        cax=cax
+        cax=cbar_axis
     )
 
-    cbar.set_label("Measured Temperature")
+    cbar.set_label(
+        "Measured Normalized Temperature"
+    )
 
     fig.suptitle(
         "Sparse Temperature Measurements",
-        fontsize=14
+        fontsize=15
     )
 
-    fig.subplots_adjust(
-        top=0.90,
-        left=0.08,
-        right=0.92,
-        bottom=0.08
-    )
-
-    plt.savefig(
+    fig.savefig(
         FIGURE_DIR / "project3_sparse_measurements.png",
-        dpi=300,
-        bbox_inches="tight"
+        dpi=300
     )
 
-    plt.close()
+    plt.close(fig)
+
 
 def print_case_information():
-    """Print information for each measurement-sparsity case."""
+    """
+    Print information for each measurement-sparsity case.
+    """
 
-    print("\nPROJECT 3 SPARSE-DATA CASES")
-    print("--------------------------------")
+    print(
+        "\nPROJECT 3 SPARSE-DATA CASES"
+    )
+
+    print(
+        "--------------------------------"
+    )
 
     for n_sensors in SENSOR_COUNTS:
 
@@ -240,9 +276,15 @@ def print_case_information():
 
 
 def verify_reference_solution():
-    """Perform simple checks on the analytical solution."""
+    """
+    Perform simple checks on the analytical solution.
+    """
 
-    t_test = np.linspace(0.0, 1.0, 100)
+    t_test = np.linspace(
+        0.0,
+        1.0,
+        100
+    )
 
     left_boundary = exact_temperature(
         np.zeros_like(t_test),
@@ -254,36 +296,59 @@ def verify_reference_solution():
         t_test
     )
 
-    print("\nREFERENCE-SOLUTION CHECK")
-    print("--------------------------------")
+    print(
+        "\nREFERENCE-SOLUTION CHECK"
+    )
+
+    print(
+        "--------------------------------"
+    )
 
     print(
         "Maximum left boundary error:",
-        np.max(np.abs(left_boundary))
+        np.max(
+            np.abs(left_boundary)
+        )
     )
 
     print(
         "Maximum right boundary error:",
-        np.max(np.abs(right_boundary))
+        np.max(
+            np.abs(right_boundary)
+        )
     )
 
 
 def main():
 
-    print("Project 3: Sparse-Data PINN Reconstruction")
+    print(
+        "Project 3: Sparse-Data PINN Reconstruction"
+    )
 
+    # --------------------------------------------------------
     # Generate analytical ground truth
+    # --------------------------------------------------------
+
     x, t, X, T, temperature = (
         create_reference_field()
     )
 
-    # Verify the analytical solution
+    # --------------------------------------------------------
+    # Verify analytical solution
+    # --------------------------------------------------------
+
     verify_reference_solution()
 
-    # Print information about sparse datasets
+    # --------------------------------------------------------
+    # Print sparse-data cases
+    # --------------------------------------------------------
+
     print_case_information()
 
+    # --------------------------------------------------------
     # Generate figures
+    # --------------------------------------------------------
+
     plot_reference_field(
         X,
         T,
@@ -292,10 +357,14 @@ def main():
 
     plot_sparse_measurements()
 
-    print("\nFigures saved:")
+    print(
+        "\nFigures saved:"
+    )
+
     print(
         "figures/project3_reference_field.png"
     )
+
     print(
         "figures/project3_sparse_measurements.png"
     )
