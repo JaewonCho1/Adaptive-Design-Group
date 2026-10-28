@@ -51,11 +51,7 @@ The full research problem is the reconstruction of a time-dependent three-dimens
 
 Conceptually, the reconstruction can be represented as
 
-$$
-\text{sparse camera observations}
-\rightarrow
-\text{unknown 3D physical field}.
-$$
+$$\text{sparse camera observations}\rightarrow\text{unknown 3D physical field}.$$
 
 Because the available measurements contain significantly less information than the complete field being reconstructed, this is an inverse problem.
 
@@ -72,21 +68,15 @@ Relevant governing equations include:
 - energy conservation,
 - advection-diffusion equations.
 
-For a temperature-like scalar field $T$, a general advection-diffusion equation may be written as
+For a temperature-like scalar field \(T\), a general advection-diffusion equation may be written as
 
-$$
-\frac{\partial T}{\partial t}
-+
-\mathbf{u}\cdot\nabla T
-=
-\alpha\nabla^2T,
-$$
+$$\frac{\partial T}{\partial t}+\mathbf{u}\cdot\nabla T=\alpha\nabla^2T.$$
 
-where
+where:
 
-- $T$ is the transported scalar field,
-- $\mathbf{u}$ is the velocity field,
-- $\alpha$ is the diffusion coefficient.
+- \(T\) is the transported scalar field,
+- \(\mathbf{u}\) is the velocity field,
+- \(\alpha\) is the diffusion coefficient.
 
 The full research problem also requires a relationship between density or temperature and refractive index, followed by an optical forward model describing how the refractive-index field affects measured light rays.
 
@@ -114,11 +104,7 @@ The available measurements do not uniquely describe every point in the unknown p
 
 Therefore,
 
-$$
-\text{fewer measurements}
-\rightarrow
-\text{greater reconstruction ambiguity}.
-$$
+$$\text{fewer measurements}\rightarrow\text{greater reconstruction ambiguity}.$$
 
 A model may potentially reproduce the available measurements while predicting an incorrect field in regions where no measurements exist.
 
@@ -132,13 +118,7 @@ Instead of learning only from measurements, the model is penalized when its pred
 
 Conceptually,
 
-$$
-\text{sparse measurements}
-+
-\text{physical governing equations}
-\rightarrow
-\text{full-field reconstruction}.
-$$
+$$\text{sparse measurements}+\text{physical governing equations}\rightarrow\text{full-field reconstruction}.$$
 
 This property makes PINNs potentially useful for the researcher's problem because measurements are difficult to obtain while physical governing equations are already known.
 
@@ -154,53 +134,36 @@ For the class project, the system will therefore be reduced to a **one-dimension
 
 The simplification is
 
-$$
-\boxed{
-\text{sparse temperature measurements}
-\rightarrow
-\text{reconstruction of the complete }T(x,t)\text{ field}
-}
-$$
+$$\text{sparse temperature measurements}\rightarrow\text{reconstruction of the complete }T(x,t)\text{ field}.$$
 
 Although the geometry and physics are simpler, the feature identified by the researcher as most important is preserved:
 
-> reconstructing a complete physical field using limited measurements while enforcing a governing PDE.
+> Reconstructing a complete physical field using limited measurements while enforcing a governing PDE.
 
 ### 3.2 Governing Equation
 
 The simplified system is governed by the one-dimensional transient heat equation,
 
-$$
-\frac{\partial T}{\partial t}
-=
-\alpha
-\frac{\partial^2T}{\partial x^2},
-$$
+$$\frac{\partial T}{\partial t}=\alpha\frac{\partial^2T}{\partial x^2}.$$
 
-over the domain
+The spatial domain is
 
-$$
-0\leq x\leq1,
-$$
+$$0\leq x\leq1,$$
 
-and
+and the time domain is
 
-$$
-0\leq t\leq1.
-$$
+$$0\leq t\leq1.$$
 
-Here,
+Here:
 
-- $T(x,t)$ is temperature,
-- $x$ is spatial position,
-- $t$ is time,
-- $\alpha$ is thermal diffusivity.
+- \(T(x,t)\) is temperature,
+- \(x\) is spatial position,
+- \(t\) is time,
+- \(\alpha\) is thermal diffusivity.
 
 An initial value of
 
-$$
-\alpha=0.01
-$$
+$$\alpha=0.01$$
 
 will be used for the numerical experiments.
 
@@ -208,13 +171,9 @@ will be used for the numerical experiments.
 
 Homogeneous Dirichlet boundary conditions are used:
 
-$$
-T(0,t)=0,
-$$
+$$T(0,t)=0,$$
 
-$$
-T(1,t)=0.
-$$
+$$T(1,t)=0.$$
 
 These conditions provide a simple domain while allowing the project to focus on the inverse reconstruction problem.
 
@@ -224,23 +183,11 @@ A known analytical solution will be used to generate synthetic measurements and 
 
 The initial temperature distribution is chosen as
 
-$$
-T(x,0)
-=
-\sin(\pi x)
-+
-0.5\sin(4\pi x).
-$$
+$$T(x,0)=\sin(\pi x)+0.5\sin(4\pi x).$$
 
 For the heat equation, the resulting analytical solution is
 
-$$
-T(x,t)
-=
-\sin(\pi x)e^{-\alpha\pi^2t}
-+
-0.5\sin(4\pi x)e^{-16\alpha\pi^2t}.
-$$
+$$T(x,t)=\sin(\pi x)e^{-\alpha\pi^2t}+0.5\sin(4\pi x)e^{-16\alpha\pi^2t}.$$
 
 This solution contains both a low-frequency and a higher-frequency spatial component.
 
@@ -252,19 +199,13 @@ The PINN will receive temperature measurements at only a limited number of spati
 
 It must reconstruct the complete function
 
-$$
-T_\theta(x,t)
-$$
-
-using both the available measurements and the heat equation.
+$$T_\theta(x,t).$$
 
 The model is therefore solving the inverse problem
 
-$$
-\text{sparse samples of }T(x,t)
-\rightarrow
-T_\theta(x,t).
-$$
+$$\text{sparse samples of }T(x,t)\rightarrow T_\theta(x,t).$$
+
+Instead of being given the complete temperature field, the PINN must combine limited measurement information with the governing heat equation.
 
 ### 3.6 Difficulty Parameter
 
@@ -272,28 +213,26 @@ The primary difficulty parameter will be **measurement sparsity**.
 
 The number of available spatial measurement locations will be progressively reduced.
 
-An initial test set will use
+An initial test set will use:
 
-| Case | Number of Sensors $N_s$ | Difficulty |
+| Case | Number of Sensors \(N_s\) | Difficulty |
 |---|---:|---|
 | 1 | 16 | Low |
 | 2 | 8 | Moderate |
 | 3 | 4 | High |
 | 4 | 2 | Very High |
 
-A sparsity parameter may be defined relative to the 16-sensor reference case as
+A sparsity parameter is defined relative to the 16-sensor reference case as
 
-$$
-S=\frac{16}{N_s}.
-$$
+$$S=\frac{16}{N_s}.$$
 
 Therefore,
 
-$$
-S\in\{1,2,4,8\}.
-$$
+$$S\in\{1,2,4,8\}.$$
 
-Increasing $S$ corresponds to increasingly sparse measurements and a more difficult inverse reconstruction problem.
+Increasing \(S\) corresponds to increasingly sparse measurements and a more difficult inverse reconstruction problem.
+
+This parameter provides a controlled method for testing how reconstruction performance changes as less measurement information becomes available.
 
 ### 3.7 Project Path
 
@@ -316,32 +255,129 @@ If a specific failure mechanism can be identified and corrected, the project may
 
 ## 4. Numerical Experiments
 
-*To be completed after implementation.*
-
 ### 4.1 P1: Conventional Baseline
+
+A conventional physics-based reconstruction method will be implemented to provide a baseline for comparison with the PINN.
+
+The analytical heat-equation solution will be used as the ground-truth reference field.
+
+The baseline method will reconstruct the temperature field from the same sparse measurements provided to the PINN.
+
+Reconstruction accuracy will be evaluated using relative \(L^2\) error,
+
+$$\text{Relative }L^2\text{ Error}=\frac{\|T_{\text{pred}}-T_{\text{true}}\|_2}{\|T_{\text{true}}\|_2}.$$
+
+Computational runtime will also be recorded.
 
 ### 4.2 P2: PINN Loss Components
 
+The PINN will be trained using a combination of measurement data and physical constraints.
+
+A general loss function will be
+
+$$L=\lambda_{\text{PDE}}L_{\text{PDE}}+\lambda_{\text{BC}}L_{\text{BC}}+\lambda_{\text{IC}}L_{\text{IC}}+\lambda_{\text{data}}L_{\text{data}}.$$
+
+The PDE residual loss will enforce the heat equation,
+
+$$L_{\text{PDE}}=\frac{1}{N_f}\sum_{i=1}^{N_f}\left|\frac{\partial T_\theta}{\partial t}-\alpha\frac{\partial^2T_\theta}{\partial x^2}\right|^2.$$
+
+The boundary-condition loss will enforce
+
+$$T_\theta(0,t)=0$$
+
+and
+
+$$T_\theta(1,t)=0.$$
+
+The measurement loss will compare the model prediction against the sparse measurements,
+
+$$L_{\text{data}}=\frac{1}{N_m}\sum_{i=1}^{N_m}\left|T_\theta(x_i,t_i)-T_i\right|^2.$$
+
+Each loss component will be recorded separately throughout training to determine whether one component dominates the optimization.
+
 ### 4.3 P3: Reconstruction Error vs. Measurement Sparsity
+
+The PINN will be trained separately for
+
+$$N_s\in\{16,8,4,2\}.$$
+
+The corresponding sparsity values are
+
+$$S\in\{1,2,4,8\}.$$
+
+Relative \(L^2\) reconstruction error will be calculated for each case.
+
+The resulting plot will show how reconstruction accuracy changes as the measurement information becomes increasingly sparse.
 
 ### 4.4 P4: Spatial and Spectral Error Analysis
 
+Pointwise reconstruction error will be calculated as
+
+$$e(x,t)=|T_\theta(x,t)-T_{\text{true}}(x,t)|.$$
+
+A heatmap of this error will be used to determine where the PINN reconstruction fails.
+
+Because the analytical temperature field contains both low- and high-frequency spatial components, Fourier analysis will also be used to evaluate whether the PINN preferentially reconstructs lower-frequency features.
+
+This analysis may reveal whether reconstruction difficulty results from spectral bias or insufficient measurement information.
+
 ### 4.5 P5: Computational Cost
+
+Computational cost will be evaluated using:
+
+- PINN training time,
+- PINN inference time,
+- conventional baseline reconstruction time,
+- hardware used for the experiments.
+
+This comparison will help determine whether a PINN could provide useful faster inference after the initial training cost.
 
 ---
 
 ## 5. Results and Discussion
 
-*To be completed after experiments.*
+This section will contain the numerical results after the conventional baseline and PINN experiments are completed.
+
+Results will include:
+
+- reference temperature field,
+- sparse measurement locations,
+- training-loss history,
+- relative reconstruction error,
+- error versus sensor sparsity,
+- pointwise error fields,
+- Fourier-spectrum comparison,
+- computational runtime.
+
+The results will be used to determine whether PINN failure at high sparsity is primarily caused by insufficient measurement information or by neural-network optimization behavior.
 
 ---
 
 ## 6. Recommendation to Researcher
 
-*To be completed after experiments.*
+A final recommendation will be prepared after completion of the numerical experiments.
+
+The recommendation will address whether physics-informed neural networks appear useful for sparse field reconstruction and under what measurement conditions they remain reliable.
+
+Particular attention will be given to the researcher's stated goals of reducing measurement requirements and potentially enabling faster inference.
 
 ---
 
 ## 7. Assumptions and Limitations
 
-*To be completed after experiments.*
+The class project intentionally simplifies the researcher's full physical reconstruction problem.
+
+Major simplifications include:
+
+- reducing the problem from three spatial dimensions to one,
+- using the heat equation rather than the full Navier-Stokes equations,
+- using synthetic measurements rather than experimental camera data,
+- excluding optical ray tracing,
+- excluding turbulence,
+- assuming a known constant thermal diffusivity,
+- using idealized boundary conditions,
+- initially assuming noise-free measurements.
+
+These simplifications allow the study to isolate the central research challenge identified by the researcher: reconstructing a complete physical field from limited measurements while enforcing known physics.
+
+The results should therefore be interpreted as a controlled demonstration of the inverse-problem behavior rather than a direct simulation of the researcher's full experimental system.
