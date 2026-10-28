@@ -301,6 +301,11 @@ def main():
             T,
             true_temperature
         )
+        if n_sensors == 2:
+    np.save(
+        "project3_pinn_2_prediction.npy",
+        prediction
+    )
 
 
         # ----------------------------------------------------
