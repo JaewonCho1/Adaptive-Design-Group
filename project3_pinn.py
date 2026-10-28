@@ -133,22 +133,32 @@ def plot_reference_field(X, T, temperature):
 
 def plot_sparse_measurements():
     """
-    Compare the measurement locations for the four
+    Compare measurement locations for the four
     sensor-sparsity cases.
     """
 
-    fig, axes = plt.subplots(
+    fig = plt.figure(figsize=(11, 8))
+
+    # 2 rows, 3 columns:
+    # first two columns = plots
+    # third narrow column = colorbar
+    gs = fig.add_gridspec(
         2,
-        2,
-        figsize=(11, 8),
-        sharex=True,
-        sharey=True,
-        constrained_layout=True
+        3,
+        width_ratios=[1, 1, 0.05],
+        wspace=0.3,
+        hspace=0.3
     )
 
-    axes = axes.flatten()
+    axes = [
+        fig.add_subplot(gs[0, 0]),
+        fig.add_subplot(gs[0, 1]),
+        fig.add_subplot(gs[1, 0]),
+        fig.add_subplot(gs[1, 1])
+    ]
 
-    # Use common color limits for every case
+    cax = fig.add_subplot(gs[:, 2])
+
     vmin = -0.2
     vmax = 1.45
 
@@ -181,23 +191,27 @@ def plot_sparse_measurements():
 
     cbar = fig.colorbar(
         scatter,
-        ax=axes,
-        shrink=0.85,
-        pad=0.03
+        cax=cax
     )
 
-    cbar.set_label(
-        "Measured Temperature"
-    )
+    cbar.set_label("Measured Temperature")
 
     fig.suptitle(
         "Sparse Temperature Measurements",
         fontsize=14
     )
 
+    fig.subplots_adjust(
+        top=0.90,
+        left=0.08,
+        right=0.92,
+        bottom=0.08
+    )
+
     plt.savefig(
         FIGURE_DIR / "project3_sparse_measurements.png",
-        dpi=300
+        dpi=300,
+        bbox_inches="tight"
     )
 
     plt.close()
