@@ -4,8 +4,6 @@
 
 ---
 
-# 1. Researcher Outreach and Interview
-
 ## 1.1 Outreach Log
 
 | Item | Information |
@@ -13,15 +11,17 @@
 | Researcher | **Omkar Shailendra** |
 | Position | **Graduate Research Assistant and Ph.D. Student in Computer Engineering** |
 | Institution | **Arizona State University** |
-| Contact Method | Email |
+| How Researcher Was Found | **Identified and contacted through LinkedIn** |
+| Initial Contact Method | LinkedIn |
+| Interview Communication | Email |
 | Interview Format | Asynchronous written interview by email |
 | Interview Completed | **October 20, 2026** |
 | Outcome | Substantive written responses received |
 | Problem-Brief Review | Follow-up confirmation requested |
 
-A researcher working on physics-based reconstruction of physical fields was contacted to identify a real computational problem that could potentially benefit from physics-informed machine learning.
+Omkar Shailendra was identified through LinkedIn while searching for an Arizona State University researcher working on computational and physics-based reconstruction problems. Initial outreach was conducted through LinkedIn.
 
-Because scheduling did not allow for a live meeting, the interview was conducted asynchronously through email. Omkar Shailendra provided written responses concerning his current research problem, governing equations, computational methods, limitations, current use of physics-informed approaches, and possible simplified problems appropriate for a classroom physics-informed neural network study.
+Because scheduling did not allow for a live meeting, the interview was later completed asynchronously through email. Omkar provided substantive written responses concerning his current research problem, governing equations, computational methods, limitations, current use of physics-informed approaches, and possible simplified problems appropriate for a classroom physics-informed neural network study.
 
 ## 1.2 Interview Summary
 
