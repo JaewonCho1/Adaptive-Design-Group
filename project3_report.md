@@ -1,0 +1,347 @@
+# Project III: Sparse-Data Field Reconstruction Using a Physics-Informed Neural Network
+
+## 1. Researcher Outreach and Interview
+
+### 1.1 Outreach
+
+For this project, a researcher working on physics-based reconstruction of physical fields was contacted to learn about a real computational problem that could potentially benefit from physics-informed machine learning.
+
+Because scheduling did not allow for a live meeting, the interview was conducted asynchronously through email. The researcher provided written responses to questions concerning their current research problem, governing equations, computational methods, limitations, and possible simplified problems suitable for a physics-informed neural network (PINN).
+
+### 1.2 Interview Summary
+
+The researcher's current work focuses on reconstructing **three-dimensional, time-varying refractive-index fields** from a limited number of camera measurements. These refractive-index variations may be produced by physical phenomena such as heat, airflow, or turbulence.
+
+The purpose of the reconstruction is to make otherwise transparent physical phenomena measurable in three dimensions.
+
+The governing physics may involve the **Navier-Stokes equations**, conservation of mass, and energy or advection-diffusion equations. Additional models relate temperature or density variations to refractive index and ultimately to the bending of light observed by cameras.
+
+Current reconstruction methods include:
+
+- differentiable rendering,
+- ray tracing,
+- gradient-based optimization,
+- GPU-based computation.
+
+For large three-dimensional or time-dependent problems, reconstruction can require thousands of optimization iterations.
+
+A major difficulty is that the reconstruction is an **inverse problem with limited measurements**. A complete three-dimensional physical field must be recovered using only a small number of two-dimensional observations. This makes the problem ill-posed because multiple fields may potentially produce similar observations.
+
+Turbulent flow further increases the difficulty of the reconstruction.
+
+The researcher also identified several challenges when physics-informed neural networks or related methods are used:
+
+- sparse measurements can allow multiple possible reconstructed solutions,
+- a model may match measured data without being fully physically correct,
+- different loss terms can be difficult to balance,
+- training can depend strongly on initialization,
+- training can require significant computational time.
+
+For a reduced classroom problem, the researcher recommended preserving the **inverse-problem and limited-data characteristics** rather than attempting to reproduce the complete three-dimensional turbulent-flow problem.
+
+A suggested simplified problem was reconstruction of a temperature field governed by a **heat equation or advection-diffusion equation** using sparse measurements and a PINN.
+
+---
+
+## 2. Problem Brief
+
+### 2.1 Real Research Problem
+
+The full research problem is the reconstruction of a time-dependent three-dimensional refractive-index field from sparse camera observations.
+
+Conceptually, the reconstruction can be represented as
+
+$$
+\text{sparse camera observations}
+\rightarrow
+\text{unknown 3D physical field}.
+$$
+
+Because the available measurements contain significantly less information than the complete field being reconstructed, this is an inverse problem.
+
+Known physical laws can provide additional information that is not directly contained in the camera measurements. Physics-informed approaches therefore combine measurement agreement with governing physical equations.
+
+### 2.2 Governing Physics
+
+Depending on the specific experiment, the complete problem can involve fluid flow, heat transfer, and optical propagation.
+
+Relevant governing equations include:
+
+- conservation of mass,
+- Navier-Stokes equations,
+- energy conservation,
+- advection-diffusion equations.
+
+For a temperature-like scalar field $T$, a general advection-diffusion equation may be written as
+
+$$
+\frac{\partial T}{\partial t}
++
+\mathbf{u}\cdot\nabla T
+=
+\alpha\nabla^2T,
+$$
+
+where
+
+- $T$ is the transported scalar field,
+- $\mathbf{u}$ is the velocity field,
+- $\alpha$ is the diffusion coefficient.
+
+The full research problem also requires a relationship between density or temperature and refractive index, followed by an optical forward model describing how the refractive-index field affects measured light rays.
+
+### 2.3 Current Computational Approach
+
+The researcher's current computational approach uses differentiable rendering, ray tracing, and gradient-based optimization.
+
+A forward model predicts the measurements that a particular physical-field estimate would produce. The reconstructed field is then adjusted iteratively until the predicted measurements agree with the experimental measurements.
+
+This process may require thousands of optimization iterations for large three-dimensional and time-dependent problems.
+
+Furthermore, reconstruction must often be repeated for different:
+
+- time steps,
+- camera arrangements,
+- measurements,
+- physical parameters,
+- experimental conditions.
+
+### 2.4 Primary Computational Challenge
+
+The primary difficulty identified by the researcher is **measurement sparsity and the resulting ill-posed inverse problem**.
+
+The available measurements do not uniquely describe every point in the unknown physical field.
+
+Therefore,
+
+$$
+\text{fewer measurements}
+\rightarrow
+\text{greater reconstruction ambiguity}.
+$$
+
+A model may potentially reproduce the available measurements while predicting an incorrect field in regions where no measurements exist.
+
+The governing PDE provides additional constraints that can help reduce this ambiguity.
+
+### 2.5 Role of Physics-Informed Machine Learning
+
+A physics-informed neural network represents the unknown physical field using a neural network while simultaneously enforcing measured data and known governing equations.
+
+Instead of learning only from measurements, the model is penalized when its predicted field violates the governing PDE.
+
+Conceptually,
+
+$$
+\text{sparse measurements}
++
+\text{physical governing equations}
+\rightarrow
+\text{full-field reconstruction}.
+$$
+
+This property makes PINNs potentially useful for the researcher's problem because measurements are difficult to obtain while physical governing equations are already known.
+
+---
+
+## 3. Minimal Problem Formulation
+
+### 3.1 Simplification of the Research Problem
+
+Modeling the complete three-dimensional turbulent refractive-index reconstruction problem would require fluid dynamics, optical ray tracing, camera models, and a large three-dimensional neural representation.
+
+For the class project, the system will therefore be reduced to a **one-dimensional transient heat-transfer inverse problem**.
+
+The simplification is
+
+$$
+\boxed{
+\text{sparse temperature measurements}
+\rightarrow
+\text{reconstruction of the complete }T(x,t)\text{ field}
+}
+$$
+
+Although the geometry and physics are simpler, the feature identified by the researcher as most important is preserved:
+
+> reconstructing a complete physical field using limited measurements while enforcing a governing PDE.
+
+### 3.2 Governing Equation
+
+The simplified system is governed by the one-dimensional transient heat equation,
+
+$$
+\frac{\partial T}{\partial t}
+=
+\alpha
+\frac{\partial^2T}{\partial x^2},
+$$
+
+over the domain
+
+$$
+0\leq x\leq1,
+$$
+
+and
+
+$$
+0\leq t\leq1.
+$$
+
+Here,
+
+- $T(x,t)$ is temperature,
+- $x$ is spatial position,
+- $t$ is time,
+- $\alpha$ is thermal diffusivity.
+
+An initial value of
+
+$$
+\alpha=0.01
+$$
+
+will be used for the numerical experiments.
+
+### 3.3 Boundary Conditions
+
+Homogeneous Dirichlet boundary conditions are used:
+
+$$
+T(0,t)=0,
+$$
+
+$$
+T(1,t)=0.
+$$
+
+These conditions provide a simple domain while allowing the project to focus on the inverse reconstruction problem.
+
+### 3.4 Reference Temperature Field
+
+A known analytical solution will be used to generate synthetic measurements and evaluate reconstruction accuracy.
+
+The initial temperature distribution is chosen as
+
+$$
+T(x,0)
+=
+\sin(\pi x)
++
+0.5\sin(4\pi x).
+$$
+
+For the heat equation, the resulting analytical solution is
+
+$$
+T(x,t)
+=
+\sin(\pi x)e^{-\alpha\pi^2t}
++
+0.5\sin(4\pi x)e^{-16\alpha\pi^2t}.
+$$
+
+This solution contains both a low-frequency and a higher-frequency spatial component.
+
+The analytical solution will only be used to generate synthetic measurement data and calculate reconstruction error. The PINN will not be given the complete analytical field during training.
+
+### 3.5 Inverse Reconstruction Problem
+
+The PINN will receive temperature measurements at only a limited number of spatial locations.
+
+It must reconstruct the complete function
+
+$$
+T_\theta(x,t)
+$$
+
+using both the available measurements and the heat equation.
+
+The model is therefore solving the inverse problem
+
+$$
+\text{sparse samples of }T(x,t)
+\rightarrow
+T_\theta(x,t).
+$$
+
+### 3.6 Difficulty Parameter
+
+The primary difficulty parameter will be **measurement sparsity**.
+
+The number of available spatial measurement locations will be progressively reduced.
+
+An initial test set will use
+
+| Case | Number of Sensors $N_s$ | Difficulty |
+|---|---:|---|
+| 1 | 16 | Low |
+| 2 | 8 | Moderate |
+| 3 | 4 | High |
+| 4 | 2 | Very High |
+
+A sparsity parameter may be defined relative to the 16-sensor reference case as
+
+$$
+S=\frac{16}{N_s}.
+$$
+
+Therefore,
+
+$$
+S\in\{1,2,4,8\}.
+$$
+
+Increasing $S$ corresponds to increasingly sparse measurements and a more difficult inverse reconstruction problem.
+
+### 3.7 Project Path
+
+The initial project will follow **Path B: Diagnosis**.
+
+The primary research question is:
+
+> How does measurement sparsity affect the ability of a physics-informed neural network to reconstruct a transient temperature field, and what causes reconstruction failure when measurements become insufficient?
+
+The study will determine whether reconstruction error increases because of:
+
+1. insufficient measurement information,
+2. neural-network optimization difficulty,
+3. imbalance between PDE and measurement losses,
+4. inability of the network to recover higher-frequency spatial features.
+
+If a specific failure mechanism can be identified and corrected, the project may be extended to **Path C** by implementing and evaluating a targeted remedy.
+
+---
+
+## 4. Numerical Experiments
+
+*To be completed after implementation.*
+
+### 4.1 P1: Conventional Baseline
+
+### 4.2 P2: PINN Loss Components
+
+### 4.3 P3: Reconstruction Error vs. Measurement Sparsity
+
+### 4.4 P4: Spatial and Spectral Error Analysis
+
+### 4.5 P5: Computational Cost
+
+---
+
+## 5. Results and Discussion
+
+*To be completed after experiments.*
+
+---
+
+## 6. Recommendation to Researcher
+
+*To be completed after experiments.*
+
+---
+
+## 7. Assumptions and Limitations
+
+*To be completed after experiments.*
