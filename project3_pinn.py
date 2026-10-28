@@ -140,17 +140,19 @@ def plot_sparse_measurements():
     fig, axes = plt.subplots(
         2,
         2,
-        figsize=(10, 8),
+        figsize=(11, 8),
         sharex=True,
-        sharey=True
+        sharey=True,
+        constrained_layout=True
     )
 
     axes = axes.flatten()
 
-    for ax, n_sensors in zip(
-        axes,
-        SENSOR_COUNTS
-    ):
+    # Use common color limits for every case
+    vmin = -0.2
+    vmax = 1.45
+
+    for ax, n_sensors in zip(axes, SENSOR_COUNTS):
 
         X_sensor, T_sensor, temperature_sensor = (
             create_sparse_measurements(n_sensors)
@@ -160,7 +162,9 @@ def plot_sparse_measurements():
             X_sensor.flatten(),
             T_sensor.flatten(),
             c=temperature_sensor.flatten(),
-            s=25
+            s=25,
+            vmin=vmin,
+            vmax=vmax
         )
 
         sparsity = 16 / n_sensors
@@ -175,24 +179,20 @@ def plot_sparse_measurements():
         ax.set_xlim(X_MIN, X_MAX)
         ax.set_ylim(T_MIN, T_MAX)
 
-    fig.colorbar(
+    cbar = fig.colorbar(
         scatter,
-        ax=axes.tolist(),
-        label="Measured Temperature"
+        ax=axes,
+        shrink=0.85,
+        pad=0.03
+    )
+
+    cbar.set_label(
+        "Measured Temperature"
     )
 
     fig.suptitle(
         "Sparse Temperature Measurements",
         fontsize=14
-    )
-
-    fig.subplots_adjust(
-        left=0.08,
-        right=0.88,
-        bottom=0.08,
-        top=0.90,
-        wspace=0.25,
-        hspace=0.30
     )
 
     plt.savefig(
@@ -201,7 +201,6 @@ def plot_sparse_measurements():
     )
 
     plt.close()
-
 
 def print_case_information():
     """Print information for each measurement-sparsity case."""
