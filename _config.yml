@@ -1,0 +1,13 @@
+title: "Adaptive Design Group"
+description: "Design Optimization course projects"
+markdown: kramdown
+kramdown:
+  input: GFM
+  math_engine: mathjax
+exclude:
+  - project4_report_template.md
+  - "*.py"
+  - "*.npy"
+  - "*.csv"
+  - "project4_verification.json"
+  - "project4_optimization.json"
