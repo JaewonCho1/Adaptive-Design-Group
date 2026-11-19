@@ -142,3 +142,33 @@ Running the analysis script generates the following Project II figures in the `f
 - `project2_method_comparison.png`
 
 These figures support the conditioning analysis, intrinsic-scaling test, gradient-descent convergence study, and comparison between gradient descent and Newton's method.
+
+---
+
+## Project IV: PDE-Constrained Design Optimization of a Quadcopter Airframe
+
+Project IV continues Project I at full scale: the complete airframe of a 25 kg heavy-lift quadcopter, modeled as a 3D space frame of 184 aluminium tubes (368 beam elements), is optimized with our own finite element solver and adjoint gradients.
+
+- **Design variables (35):** 31 tube-radius groups (four identical lattice arms + hub) and 4 shape parameters (arm depth and width at root and tip)
+- **Objective:** minimize frame mass
+- **Requirements:** static strength, Goodman fatigue, motor deflection, lowest natural frequency above the rotor frequency, linear buckling (the nonlinear component, N1), member slenderness
+- **Result:** 1.14 kg frame that meets every requirement, 86% lighter than the lightest uniform-tube design (7.95 kg); the starting design (2.32 kg) fails the vibration requirement
+
+The report, with a live 3D comparison of the initial and optimized designs, is published with GitHub Pages:
+
+`https://jaewoncho1.github.io/Adaptive-Design-Group/project4_report.html`
+
+(source: `project4_report.md`, generated from `project4_report_template.md`)
+
+### Running the Project IV Analysis
+
+```bash
+pip install numpy scipy matplotlib
+python project4_run_all.py
+```
+
+One command runs the verification ladder (`project4_verify.py`), the optimizations (`project4_optimize.py`) and regenerates `assets/project4_results.json`, the `figures/project4_*.png` figures and `project4_report.md` (`project4_finalize.py`). Runtime is about 4 minutes. The finite element code is in `project4_frame.py` and the quadcopter model in `project4_drone.py`.
+
+### GitHub Pages setup
+
+Settings → Pages → Source: **Deploy from a branch**, branch `main`, folder `/ (root)`. `_config.yml` and `_layouts/default.html` load MathJax (equations) and three.js (3D viewer). The README becomes the site's home page and every project report is served as a page.
